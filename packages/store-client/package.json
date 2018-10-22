@@ -1,0 +1,38 @@
+{
+  "name": "@stratumn/store-client",
+  "version": "0.1.0",
+  "description": "A client to interact with a Chainscript Store.",
+  "keywords": [
+    "stratumn",
+    "chainscript",
+    "http",
+    "grpc",
+    "client"
+  ],
+  "author": "Stratumn Team",
+  "homepage": "https://github.com/stratumn/js-core#readme",
+  "license": "Apache-2.0",
+  "main": "lib/store-client.js",
+  "typings": "lib/store-client.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stratumn/js-core.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -r ./lib",
+    "lint": "tslint --project \"./tsconfig.json\"",
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/stratumn/js-core/issues"
+  }
+}

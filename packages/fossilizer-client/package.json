@@ -1,0 +1,39 @@
+{
+  "name": "@stratumn/fossilizer-client",
+  "version": "0.1.0",
+  "description": "A client to interact with a Chainscript fossilizer.",
+  "keywords": [
+    "stratumn",
+    "chainscript",
+    "http",
+    "grpc",
+    "client",
+    "bitcoin"
+  ],
+  "author": "Stratumn Team",
+  "homepage": "https://github.com/stratumn/js-core#readme",
+  "license": "Apache-2.0",
+  "main": "lib/fossilizer-client.js",
+  "typings": "lib/fossilizer-client.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stratumn/js-core.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -r ./lib",
+    "lint": "tslint --project \"./tsconfig.json\"",
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/stratumn/js-core/issues"
+  }
+}

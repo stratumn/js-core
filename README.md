@@ -10,3 +10,35 @@ decentralized applications and networks.
 To get started, visit our [developer portal](https://developer.stratumn.com).
 
 ---
+
+## Build
+
+This project uses [Typescript](https://www.typescriptlang.org),
+[Yarn](https://yarnpkg.com) and [Lerna](https://lernajs.io/).
+
+To install dependencies, simply run:
+
+```bash
+yarn
+```
+
+To build libraries, run:
+
+```bash
+yarn tsc
+```
+
+Don't forget to run the linter as well (if you are using VS Code, we recommend
+setting `tslint.autoFixOnSave`):
+
+```bash
+yarn lint
+```
+
+## Publish
+
+We use lerna to publish packages to npm:
+
+```bash
+yarn publish:npm
+```

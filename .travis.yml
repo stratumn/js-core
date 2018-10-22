@@ -1,0 +1,13 @@
+language: node_js
+cache: yarn
+node_js:
+  - 6
+  - 8
+before_script:
+  - yarn global add codecov
+  - lerna bootstrap
+script:
+  - yarn tsc
+  - yarn lint
+  - yarn test
+  - codecov

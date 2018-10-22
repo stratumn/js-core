@@ -31,9 +31,22 @@
   "scripts": {
     "clean": "rm -r ./lib",
     "lint": "tslint --project \"./tsconfig.json\"",
+    "test": "jest",
     "tsc": "tsc"
   },
   "bugs": {
     "url": "https://github.com/stratumn/js-core/issues"
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "\\.ts$": "ts-jest"
+    },
+    "testRegex": "/src/.*\\.spec\\.ts$"
   }
 }

@@ -14,10 +14,10 @@
   limitations under the License.
 */
 
-import { FossilizerClient } from './fossilizer-client';
+import { StoreClient } from './storeClient';
 
-describe('fossilizer client', () => {
+describe('store client', () => {
   it('says hello', () => {
-    expect(new FossilizerClient().greet()).toBe('hello');
+    expect(new StoreClient().greet()).toBe('hello');
   });
 });

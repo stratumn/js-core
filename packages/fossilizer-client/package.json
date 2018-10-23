@@ -13,8 +13,8 @@
   "author": "Stratumn Team",
   "homepage": "https://github.com/stratumn/js-core#readme",
   "license": "Apache-2.0",
-  "main": "lib/fossilizer-client.js",
-  "typings": "lib/fossilizer-client.d.ts",
+  "main": "lib/fossilizerClient.js",
+  "typings": "lib/fossilizerClient.d.ts",
   "directories": {
     "lib": "lib"
   },

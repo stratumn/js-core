@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import { StoreClient } from './store-client';
+import { StoreClient } from './storeClient';
 
 describe('store client', () => {
   it('says hello', () => {

@@ -12,8 +12,8 @@
   "author": "Stratumn Team",
   "homepage": "https://github.com/stratumn/js-core#readme",
   "license": "Apache-2.0",
-  "main": "lib/store-client.js",
-  "typings": "lib/store-client.d.ts",
+  "main": "lib/storeClient.js",
+  "typings": "lib/storeClient.d.ts",
   "directories": {
     "lib": "lib"
   },

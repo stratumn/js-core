@@ -28,9 +28,9 @@ export interface IFossilizerClient {
   /**
    * Send data to fossilize.
    * @param data hex-encoded bytes to fossilize.
-   * @param metadata human-readable metadata.
+   * @param meta human-readable metadata.
    */
-  fossilize(data: string, metadata: string): Promise<void>;
+  fossilize(data: string, meta: string): Promise<void>;
 }
 
 /**
@@ -53,7 +53,13 @@ export class FossilizerHttpClient implements IFossilizerClient {
     return response.data.adapter;
   }
 
-  public async fossilize(data: string, metadata: string): Promise<void> {
-    throw new Error(data + metadata);
+  public async fossilize(data: string, meta: string): Promise<void> {
+    const response = await axios.post(this.fossilizerUrl, {
+      data,
+      meta
+    });
+    if (response.status !== 200) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
   }
 }

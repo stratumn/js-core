@@ -20,6 +20,7 @@ import { FossilizerHttpClient } from './fossilizerClient';
 jest.mock('axios');
 
 describe('fossilizer http client', () => {
+  const client = new FossilizerHttpClient('https://fossilize.stratumn.com');
   let axiosMock: jest.SpyInstance;
 
   afterEach(() => {
@@ -28,8 +29,6 @@ describe('fossilizer http client', () => {
 
   describe('info', () => {
     it('throws in case of network error', async () => {
-      const client = new FossilizerHttpClient('http://127.0.0.1:6001');
-
       axiosMock = jest.spyOn(axios, 'get');
       axiosMock.mockRejectedValue('network failure');
 
@@ -43,8 +42,6 @@ describe('fossilizer http client', () => {
     });
 
     it('throws if status code is not ok', async () => {
-      const client = new FossilizerHttpClient('http://localhost:6000');
-
       axiosMock = jest.spyOn(axios, 'get');
       axiosMock.mockResolvedValue({ status: 404, statusText: 'Not Found' });
 
@@ -58,7 +55,6 @@ describe('fossilizer http client', () => {
     });
 
     it('returns fossilizer info', async () => {
-      const client = new FossilizerHttpClient('https://fossilize.stratumn.com');
       const fossInfo = {
         description: 'Fossilizes data on the Bitcoin blockchain',
         name: 'BtcFossilizer'
@@ -74,6 +70,46 @@ describe('fossilizer http client', () => {
 
       const res = await client.info();
       expect(res).toBe(fossInfo);
+    });
+  });
+
+  describe('fossilize', () => {
+    it('throws in case of network error', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockRejectedValue('network failure');
+
+      try {
+        await client.fossilize('42', 'batman');
+        expect(true).toBeFalsy();
+      } catch (err) {
+        expect(axiosMock).toHaveBeenCalled();
+        expect(err).toBe('network failure');
+      }
+    });
+
+    it('throws if status code is not ok', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({ status: 400, statusText: 'Bad Request' });
+
+      try {
+        await client.fossilize('not hex data', '');
+        expect(true).toBeFalsy();
+      } catch (err) {
+        expect(axiosMock).toHaveBeenCalled();
+        expect(err).toEqual(new Error('HTTP 400: Bad Request'));
+      }
+    });
+
+    it('fossilizes data', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        data: 'ok',
+        status: 200
+      });
+
+      await client.fossilize('4242', 'batman');
+
+      expect(axiosMock).toHaveBeenCalled();
     });
   });
 });

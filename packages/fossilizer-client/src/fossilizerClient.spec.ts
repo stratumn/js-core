@@ -69,6 +69,9 @@ describe('fossilizer http client', () => {
       });
 
       const res = await client.info();
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith('https://fossilize.stratumn.com');
       expect(res).toBe(fossInfo);
     });
   });
@@ -110,6 +113,10 @@ describe('fossilizer http client', () => {
       await client.fossilize('4242', 'batman');
 
       expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://fossilize.stratumn.com/fossils',
+        { data: '4242', meta: 'batman' }
+      );
     });
   });
 });

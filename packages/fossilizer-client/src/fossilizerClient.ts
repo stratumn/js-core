@@ -54,7 +54,7 @@ export class FossilizerHttpClient implements IFossilizerClient {
   }
 
   public async fossilize(data: string, meta: string): Promise<void> {
-    const response = await axios.post(this.fossilizerUrl, {
+    const response = await axios.post(this.fossilizerUrl + '/fossils', {
       data,
       meta
     });

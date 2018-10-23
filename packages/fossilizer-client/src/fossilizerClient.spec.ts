@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import { FossilizerClient } from './fossilizer-client';
+import { FossilizerClient } from './fossilizerClient';
 
 describe('fossilizer client', () => {
   it('says hello', () => {

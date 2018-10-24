@@ -48,5 +48,12 @@
       "\\.ts$": "ts-jest"
     },
     "testRegex": "/src/.*\\.spec\\.ts$"
+  },
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "await-to-js": "^2.0.1",
+    "jest": "^23.6.0"
   }
 }

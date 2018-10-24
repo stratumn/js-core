@@ -14,8 +14,52 @@
   limitations under the License.
 */
 
-export class FossilizerClient {
-  public greet() {
-    return 'hello';
+import axios from 'axios';
+
+/**
+ * IFossilizerClient provides access to the Chainscript fossilizer API.
+ */
+export interface IFossilizerClient {
+  /**
+   * Returns unstructured information about the fossilizer.
+   */
+  info(): Promise<any>;
+
+  /**
+   * Send data to fossilize.
+   * @param data hex-encoded bytes to fossilize.
+   * @param meta human-readable metadata.
+   */
+  fossilize(data: string, meta: string): Promise<void>;
+}
+
+/**
+ * FossilizerHttpClient provides access to the Chainscript fossilizer API
+ * via HTTP requests.
+ */
+export class FossilizerHttpClient implements IFossilizerClient {
+  private fossilizerUrl: string;
+
+  constructor(url: string) {
+    this.fossilizerUrl = url;
+  }
+
+  public async info(): Promise<any> {
+    const response = await axios.get(this.fossilizerUrl);
+    if (response.status !== 200) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    return response.data.adapter;
+  }
+
+  public async fossilize(data: string, meta: string): Promise<void> {
+    const response = await axios.post(this.fossilizerUrl + '/fossils', {
+      data,
+      meta
+    });
+    if (response.status !== 200) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
   }
 }

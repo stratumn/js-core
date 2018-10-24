@@ -17,18 +17,55 @@
 import axios from 'axios';
 
 /**
- * IFossilizerClient provides access to the Chainscript fossilizer API.
+ * IFossilizerClient provides access to the Stratumn fossilizer API.
+ *
+ * A fossilizer will take your data and provide an externally-verifiable proof
+ * of existence for that data.
+ * It will also provide a relative ordering of the events that produced that
+ * data.
+ *
+ * Stratumn provides multiple fossilizer implementations and anyone can build a
+ * new fossilizer that meets their trust/scalability requirements.
+ *
+ * For example, if you use a Bitcoin fossilizer, a merkle tree will be built
+ * from a batch of data and will be included in a Bitcoin transaction.
+ * Since the Bitcoin blockchain is immutable, you'll have a record that your
+ * data existed at block N.
+ * Since Bitcoin provides ordering, you will also be able to prove that some
+ * data was produced before some other data.
+ *
+ * Another example is to use a trusted authority to act as a fossilizer.
+ * It could be a bank, a government or a regulatory body.
+ * It would sign your data with the timestamp at which it received it and send
+ * back that signature.
+ * If you trust that entity, you can trust its timestamp so it provides a
+ * relative ordering for your events.
  */
 export interface IFossilizerClient {
   /**
-   * Returns unstructured information about the fossilizer.
+   * Returns unstructured information about the fossilizer like its name,
+   * description, commit hash, etc.
    */
   info(): Promise<any>;
 
   /**
-   * Send data to fossilize.
-   * @param data hex-encoded bytes to fossilize.
+   * Send some data to fossilize.
+   *
+   * The fossilizer shouldn't know anything about your data, so you should
+   * never send the raw data but rather a hash of it or a commitment.
+   * It also makes it cheaper to store on a public blockchain.
+   *
+   * Fossilization is done asynchronously. You will receive a notification
+   * once your data has been successfully fossilized. The mechanism used for
+   * this notification depends on the actual client implementation.
+   *
+   * @param data hex-encoded bytes (hash/commitment of your data).
    * @param meta human-readable metadata.
+   * Since a hash doesn't link back to the data it represents, adding a meta
+   * field lets you link back to the actual data.
+   * Depending on your needs, you can put a description of the hashed data,
+   * an opaque ID that links back to the data in your systems, or anything
+   * you feel would be useful.
    */
   fossilize(data: string, meta: string): Promise<void>;
 }
@@ -36,6 +73,7 @@ export interface IFossilizerClient {
 /**
  * FossilizerHttpClient provides access to the Chainscript fossilizer API
  * via HTTP requests.
+ * A websocket is used to receive notifications about fossilized data.
  */
 export class FossilizerHttpClient implements IFossilizerClient {
   private fossilizerUrl: string;

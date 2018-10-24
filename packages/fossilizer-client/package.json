@@ -50,7 +50,8 @@
     "testRegex": "/src/.*\\.spec\\.ts$"
   },
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
     "await-to-js": "^2.0.1",

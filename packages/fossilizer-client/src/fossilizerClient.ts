@@ -15,6 +15,8 @@
 */
 
 import axios from 'axios';
+import WebSocket from 'isomorphic-ws';
+import { DID_FOSSILIZE_LINK_EVENT, FossilizedEvent } from './events';
 
 /**
  * IFossilizerClient provides access to the Stratumn fossilizer API.
@@ -73,13 +75,38 @@ export interface IFossilizerClient {
 /**
  * FossilizerHttpClient provides access to the Chainscript fossilizer API
  * via HTTP requests.
- * A websocket is used to receive notifications about fossilized data.
+ * Your application should use a single instance of this client, because it
+ * opens a websocket with the fossilizer server to receive notifications.
  */
 export class FossilizerHttpClient implements IFossilizerClient {
   private fossilizerUrl: string;
+  private socket: WebSocket | null;
 
-  constructor(url: string) {
+  /**
+   * Create an http client to interact with a fossilizer.
+   * If you provide an eventHandler, a websocket connection will be opened
+   * with the fossilizer and events will be forwarded to your handler.
+   * Since fossilization is done asynchronously, this is useful when you want
+   * to be notified when your data has been successfully fossilized.
+   * @param url of the fossilizer API.
+   * @param eventHandler (optional) event handler for fossilizer notifications.
+   */
+  constructor(url: string, eventHandler?: (e: FossilizedEvent) => void) {
     this.fossilizerUrl = url;
+    this.socket = null;
+
+    if (eventHandler) {
+      this.socket = new WebSocket(url + '/websocket');
+      this.socket.on('open', () => {
+        (this.socket as WebSocket).on('message', (jsonPayload: string) => {
+          const message = JSON.parse(jsonPayload);
+          if (message.type === DID_FOSSILIZE_LINK_EVENT) {
+            const event = new FossilizedEvent(message.data);
+            eventHandler(event);
+          }
+        });
+      });
+    }
   }
 
   public async info(): Promise<any> {

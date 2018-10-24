@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import { to } from 'await-to-js';
+import to from 'await-to-js';
 import axios from 'axios';
 import { FossilizerHttpClient } from './fossilizerClient';
 

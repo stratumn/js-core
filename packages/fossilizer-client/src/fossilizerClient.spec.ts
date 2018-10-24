@@ -14,6 +14,7 @@
   limitations under the License.
 */
 
+import { to } from 'await-to-js';
 import axios from 'axios';
 import { FossilizerHttpClient } from './fossilizerClient';
 
@@ -32,26 +33,18 @@ describe('fossilizer http client', () => {
       axiosMock = jest.spyOn(axios, 'get');
       axiosMock.mockRejectedValue('network failure');
 
-      try {
-        await client.info();
-        expect(true).toBeFalsy();
-      } catch (err) {
-        expect(axiosMock).toHaveBeenCalled();
-        expect(err).toBe('network failure');
-      }
+      const [err] = await to(client.info());
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toBe('network failure');
     });
 
     it('throws if status code is not ok', async () => {
       axiosMock = jest.spyOn(axios, 'get');
       axiosMock.mockResolvedValue({ status: 404, statusText: 'Not Found' });
 
-      try {
-        await client.info();
-        expect(true).toBeFalsy();
-      } catch (err) {
-        expect(axiosMock).toHaveBeenCalled();
-        expect(err).toEqual(new Error('HTTP 404: Not Found'));
-      }
+      const [err] = await to(client.info());
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual(new Error('HTTP 404: Not Found'));
     });
 
     it('returns fossilizer info', async () => {
@@ -81,26 +74,18 @@ describe('fossilizer http client', () => {
       axiosMock = jest.spyOn(axios, 'post');
       axiosMock.mockRejectedValue('network failure');
 
-      try {
-        await client.fossilize('42', 'batman');
-        expect(true).toBeFalsy();
-      } catch (err) {
-        expect(axiosMock).toHaveBeenCalled();
-        expect(err).toBe('network failure');
-      }
+      const [err] = await to(client.fossilize('42', 'batman'));
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toBe('network failure');
     });
 
     it('throws if status code is not ok', async () => {
       axiosMock = jest.spyOn(axios, 'post');
       axiosMock.mockResolvedValue({ status: 400, statusText: 'Bad Request' });
 
-      try {
-        await client.fossilize('not hex data', '');
-        expect(true).toBeFalsy();
-      } catch (err) {
-        expect(axiosMock).toHaveBeenCalled();
-        expect(err).toEqual(new Error('HTTP 400: Bad Request'));
-      }
+      const [err] = await to(client.fossilize('not hex data', ''));
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual(new Error('HTTP 400: Bad Request'));
     });
 
     it('fossilizes data', async () => {

@@ -49,6 +49,12 @@
     "testRegex": "/src/.*\\.spec\\.ts$"
   },
   "dependencies": {
-    "@stratumn/js-chainscript": "^1.0.1"
+    "@stratumn/js-chainscript": "^1.0.1",
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.7",
+    "await-to-js": "^2.0.1",
+    "jest": "^23.6.0"
   }
 }

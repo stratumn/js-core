@@ -16,16 +16,144 @@
 
 import to from 'await-to-js';
 import axios from 'axios';
+import WebSocket from 'isomorphic-ws';
+import { FossilizedEvent } from './events';
 import { FossilizerHttpClient } from './fossilizerClient';
 
 jest.mock('axios');
+jest.mock('isomorphic-ws');
 
 describe('fossilizer http client', () => {
   const client = new FossilizerHttpClient('https://fossilize.stratumn.com');
   let axiosMock: jest.SpyInstance;
 
   afterEach(() => {
-    axiosMock.mockRestore();
+    if (axiosMock) {
+      axiosMock.mockRestore();
+    }
+  });
+
+  describe('ctor', () => {
+    // Mock the WebSocket.on() method to accept an 'open' call and return a
+    // custom websocket message once.
+    const mockSocketOn = (message: string) => (
+      event: string,
+      callback: any
+    ) => {
+      if (event === 'open') {
+        callback();
+      } else if (event === 'message') {
+        callback(message);
+      }
+    };
+
+    it('appends websocket path', () => {
+      (WebSocket as any).mockImplementationOnce((url: string) => {
+        expect(url).toBe('http://localhost:6000/websocket');
+      });
+
+      const wsClient = new FossilizerHttpClient(
+        'http://localhost:6000/',
+        () => {
+          // This handler shouldn't be invoked in this test.
+          expect(true).toBeFalsy();
+        }
+      );
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
+    it('opens a websocket with the fossilizer', done => {
+      (WebSocket as any).mockImplementationOnce(() => {
+        return {
+          on: (event: string) => {
+            expect(event).toBe('open');
+            done();
+          }
+        };
+      });
+
+      const wsClient = new FossilizerHttpClient('http://localhost:6000', () => {
+        // This handler shouldn't be invoked in this test.
+        expect(true).toBeFalsy();
+      });
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
+    it('receives fossilizer events', done => {
+      (WebSocket as any).mockImplementationOnce(() => {
+        return {
+          on: mockSocketOn(
+            JSON.stringify({
+              data: {
+                Data: 'YmF0bWFu',
+                Evidence: {
+                  backend: 'dummyfossilizer',
+                  proof: 'eyJ0aW1lc3RhbXAiOjE1NDAzOTM3MzV9',
+                  provider: 'dummyfossilizer',
+                  version: '1.0.0'
+                },
+                Meta: 'YmF0bWFu'
+              },
+              type: 'DidFossilizeLink'
+            })
+          )
+        };
+      });
+
+      const wsClient = new FossilizerHttpClient(
+        'http://localhost:6000',
+        (e: FossilizedEvent) => {
+          expect(e.data).toBe('6261746d616e');
+          expect(e.meta).toBe('batman');
+          expect(e.evidence.proof).toBe('eyJ0aW1lc3RhbXAiOjE1NDAzOTM3MzV9');
+          done();
+        }
+      );
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
+    it('ignores unknown event type', () => {
+      (WebSocket as any).mockImplementationOnce(() => {
+        return {
+          on: mockSocketOn(JSON.stringify({ type: 'DidSaveLink' }))
+        };
+      });
+
+      const wsClient = new FossilizerHttpClient('http://localhost:6000', () => {
+        // This handler shouldn't be invoked in this test.
+        expect(true).toBeFalsy();
+      });
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
+    it('ignores invalid events', () => {
+      (WebSocket as any).mockImplementationOnce(() => {
+        return {
+          on: mockSocketOn(
+            JSON.stringify({
+              data: { Meta: 'some stuff is missing...' },
+              type: 'DidFossilizeLink'
+            })
+          )
+        };
+      });
+
+      const wsClient = new FossilizerHttpClient('http://localhost:6000', () => {
+        // This handler shouldn't be invoked in this test.
+        expect(true).toBeFalsy();
+      });
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
   });
 
   describe('info', () => {
@@ -101,6 +229,22 @@ describe('fossilizer http client', () => {
       expect(axiosMock).toHaveBeenCalledWith(
         'https://fossilize.stratumn.com/fossils',
         { data: '4242', meta: 'batman' }
+      );
+    });
+
+    it('accepts meta object', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        data: 'ok',
+        status: 200
+      });
+
+      await client.fossilize('4242', { user: 'batman', age: 42 });
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://fossilize.stratumn.com/fossils',
+        { data: '4242', meta: JSON.stringify({ user: 'batman', age: 42 }) }
       );
     });
   });

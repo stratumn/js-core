@@ -14,7 +14,8 @@
   limitations under the License.
 */
 
+import { IFossilizerClient } from './client';
 import { FossilizedEvent } from './events';
-import { FossilizerHttpClient, IFossilizerClient } from './fossilizerClient';
+import { FossilizerHttpClient } from './httpClient';
 
 export { FossilizedEvent, FossilizerHttpClient, IFossilizerClient };

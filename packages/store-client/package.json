@@ -47,5 +47,8 @@
       "\\.ts$": "ts-jest"
     },
     "testRegex": "/src/.*\\.spec\\.ts$"
+  },
+  "dependencies": {
+    "@stratumn/js-chainscript": "^1.0.1"
   }
 }

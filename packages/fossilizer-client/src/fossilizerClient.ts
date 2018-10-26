@@ -92,12 +92,16 @@ export class FossilizerHttpClient implements IFossilizerClient {
    * @param eventHandler (optional) event handler for fossilizer notifications.
    */
   constructor(url: string, eventHandler?: (e: FossilizedEvent) => void) {
-    this.fossilizerUrl = url;
+    if (url.endsWith('/')) {
+      this.fossilizerUrl = url.substring(0, url.length - 1);
+    } else {
+      this.fossilizerUrl = url;
+    }
+
     this.socket = null;
 
     if (eventHandler) {
-      const wsUrl = url.endsWith('/') ? url + 'websocket' : url + '/websocket';
-      this.socket = new WebSocket(wsUrl);
+      this.socket = new WebSocket(this.fossilizerUrl + '/websocket');
       this.socket.on('open', () => {
         (this.socket as WebSocket).on('message', (jsonPayload: string) => {
           const message = JSON.parse(jsonPayload);

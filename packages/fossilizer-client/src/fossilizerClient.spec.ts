@@ -36,14 +36,15 @@ describe('fossilizer http client', () => {
   describe('ctor', () => {
     // Mock the WebSocket.on() method to accept an 'open' call and return a
     // custom websocket message once.
-    const mockSocketOn = (message: string) => {
-      return (event: string, callback: any) => {
-        if (event === 'open') {
-          callback();
-        } else if (event === 'message') {
-          callback(message);
-        }
-      };
+    const mockSocketOn = (message: string) => (
+      event: string,
+      callback: any
+    ) => {
+      if (event === 'open') {
+        callback();
+      } else if (event === 'message') {
+        callback(message);
+      }
     };
 
     it('appends websocket path', () => {

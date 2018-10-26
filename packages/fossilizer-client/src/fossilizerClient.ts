@@ -96,7 +96,8 @@ export class FossilizerHttpClient implements IFossilizerClient {
     this.socket = null;
 
     if (eventHandler) {
-      this.socket = new WebSocket(url + '/websocket');
+      const wsUrl = url.endsWith('/') ? url + 'websocket' : url + '/websocket';
+      this.socket = new WebSocket(wsUrl);
       this.socket.on('open', () => {
         (this.socket as WebSocket).on('message', (jsonPayload: string) => {
           const message = JSON.parse(jsonPayload);

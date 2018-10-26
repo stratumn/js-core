@@ -46,6 +46,23 @@ describe('fossilizer http client', () => {
       };
     };
 
+    it('appends websocket path', () => {
+      (WebSocket as any).mockImplementationOnce((url: string) => {
+        expect(url).toBe('http://localhost:6000/websocket');
+      });
+
+      const wsClient = new FossilizerHttpClient(
+        'http://localhost:6000/',
+        () => {
+          // This handler shouldn't be invoked in this test.
+          expect(true).toBeFalsy();
+        }
+      );
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
     it('opens a websocket with the fossilizer', done => {
       (WebSocket as any).mockImplementationOnce(() => {
         return {

@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import { Link, Segment } from '@stratumn/js-chainscript';
+import { fromSegmentObject, Link, Segment } from '@stratumn/js-chainscript';
 import axios from 'axios';
 import { IStoreClient } from './client';
 
@@ -49,7 +49,16 @@ export class StoreHttpClient implements IStoreClient {
   }
 
   public async createLink(link: Link): Promise<Segment> {
-    return link.segmentify();
+    const response = await axios.post(
+      this.storeUrl + '/links',
+      link.toObject({ bytes: String })
+    );
+    if (response.status !== 200) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const segment = fromSegmentObject(response.data);
+    return segment;
   }
 
   public getSegment(linkHash: string): Promise<Segment> {

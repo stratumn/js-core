@@ -15,5 +15,6 @@
 */
 
 import { IStoreClient } from './client';
+import { StoreHttpClient } from './httpClient';
 
-export { IStoreClient };
+export { IStoreClient, StoreHttpClient };

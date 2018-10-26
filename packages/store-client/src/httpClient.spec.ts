@@ -14,6 +14,7 @@
   limitations under the License.
 */
 
+import { LinkBuilder } from '@stratumn/js-chainscript';
 import to from 'await-to-js';
 import axios from 'axios';
 import { StoreHttpClient } from './httpClient';
@@ -68,6 +69,53 @@ describe('store http client', () => {
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith('https://store.stratumn.com');
       expect(res).toBe(info);
+    });
+  });
+
+  describe('create link', () => {
+    const testLink = new LinkBuilder('test_process', 'test_map').build();
+    // This is what the testLink should look like after a link.toObject() call.
+    const testLinkObject = {
+      meta: {
+        clientId: 'github.com/stratumn/js-chainscript',
+        mapId: 'test_map',
+        outDegree: -1,
+        process: {
+          name: 'test_process'
+        }
+      },
+      version: '1.0.0'
+    };
+
+    it('throws if status code is not ok', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({ status: 400, statusText: 'Bad Request' });
+
+      const [err] = await to(client.createLink(testLink));
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual(new Error('HTTP 400: Bad Request'));
+    });
+
+    it('serializes the link', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        data: {
+          link: testLinkObject,
+          meta: {
+            linkHash: '9uqBhUfUEBi5KD28dBcPl2QoTrTbprf1wAUFxLk6Z6U='
+          }
+        },
+        status: 200
+      });
+
+      const segment = await client.createLink(testLink);
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/links',
+        testLinkObject
+      );
+      expect(segment.linkHash()).toEqual(testLink.hash());
     });
   });
 });

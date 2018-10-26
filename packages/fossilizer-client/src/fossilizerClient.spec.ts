@@ -231,5 +231,21 @@ describe('fossilizer http client', () => {
         { data: '4242', meta: 'batman' }
       );
     });
+
+    it('accepts meta object', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        data: 'ok',
+        status: 200
+      });
+
+      await client.fossilize('4242', { user: 'batman', age: 42 });
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://fossilize.stratumn.com/fossils',
+        { data: '4242', meta: JSON.stringify({ user: 'batman', age: 42 }) }
+      );
+    });
   });
 });

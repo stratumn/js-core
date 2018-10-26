@@ -66,10 +66,10 @@ export interface IFossilizerClient {
    * Since a hash doesn't link back to the data it represents, adding a meta
    * field lets you link back to the actual data.
    * Depending on your needs, you can put a description of the hashed data,
-   * an opaque ID that links back to the data in your systems, or anything
+   * an opaque ID that links back to the data in your systems, or any object
    * you feel would be useful.
    */
-  fossilize(data: string, meta: string): Promise<void>;
+  fossilize(data: string, meta: string | object): Promise<void>;
 }
 
 /**
@@ -128,11 +128,13 @@ export class FossilizerHttpClient implements IFossilizerClient {
     return response.data.adapter;
   }
 
-  public async fossilize(data: string, meta: string): Promise<void> {
-    const response = await axios.post(this.fossilizerUrl + '/fossils', {
-      data,
-      meta
-    });
+  public async fossilize(data: string, meta: string | object): Promise<void> {
+    const fossil =
+      typeof meta === 'string'
+        ? { data, meta }
+        : { data, meta: JSON.stringify(meta) };
+
+    const response = await axios.post(this.fossilizerUrl + '/fossils', fossil);
     if (response.status !== 200) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }

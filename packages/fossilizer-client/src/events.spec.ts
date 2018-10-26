@@ -30,11 +30,30 @@ describe('events', () => {
     };
   };
 
-  it('creates event', () => {
+  it('creates event with string meta', () => {
     const e = new FossilizedEvent(validMessage());
 
     expect(e.data).toBe('6261746d616e');
     expect(e.meta).toBe('batman');
+    expect(e.evidence.version).toBe('1.0.0');
+    expect(e.evidence.backend).toBe('dummy');
+    expect(e.evidence.provider).toBe('dummy');
+    expect(e.evidence.proof).toBe('eyJ0aW1lc3RhbXAiOjE1NDAzOTYxMTV9');
+  });
+
+  it('creates event with complex meta', () => {
+    const message = validMessage();
+    message.Meta = Buffer.from(
+      JSON.stringify({
+        age: 42,
+        user: 'batman'
+      })
+    ).toString('base64');
+
+    const e = new FossilizedEvent(message);
+
+    expect(e.data).toBe('6261746d616e');
+    expect(e.meta).toEqual({ user: 'batman', age: 42 });
     expect(e.evidence.version).toBe('1.0.0');
     expect(e.evidence.backend).toBe('dummy');
     expect(e.evidence.provider).toBe('dummy');

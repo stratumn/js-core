@@ -22,12 +22,21 @@ export const DID_FOSSILIZE_LINK_EVENT = 'DidFossilizeLink';
 
 export class FossilizedEvent {
   public data: string;
-  public meta: string;
+  public meta: string | object;
   public evidence: Evidence;
 
   constructor(message: any) {
     this.data = Buffer.from(message.Data, 'base64').toString('hex');
     this.meta = Buffer.from(message.Meta, 'base64').toString();
+
+    // If meta is a JSON object, parse it.
+    try {
+      const meta = JSON.parse(this.meta);
+      this.meta = meta;
+    } catch {
+      // Simply keep the string version.
+    }
+
     this.evidence = new Evidence(
       message.Evidence.version,
       message.Evidence.backend,

@@ -6,7 +6,7 @@ update-license-header() {
 	perl -i -0pe 's/\/\*.*\n.*Copyright.*Stratumn.*\n([\s\S]*?)\*\/(\N*)\n/`cat LICENSE_HEADER`.$2/ge' $1
 }
 
-directories="src"
+directories="src test"
 extensions="ts js less"
 
 for d in $directories; do

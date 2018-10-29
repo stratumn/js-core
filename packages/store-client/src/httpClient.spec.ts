@@ -22,6 +22,7 @@ import {
   SimpleSegmentObject
 } from '../test/fixtures/simpleSegment';
 import { StoreHttpClient } from './httpClient';
+import { Pagination } from './pagination';
 
 jest.mock('axios');
 
@@ -145,6 +146,79 @@ describe('store http client', () => {
         'https://store.stratumn.com/segments/d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592'
       );
       expect(segment).toEqual(SimpleLink.segmentify());
+    });
+  });
+
+  describe('getMapIDs', () => {
+    it('accepts empty process', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        data: ['map1', 'map2'],
+        status: 200
+      });
+
+      const mapIDs = await client.getMapIDs('', new Pagination(10, 10));
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/maps?offset=10&limit=10'
+      );
+      expect(mapIDs).toEqual(['map1', 'map2']);
+    });
+
+    it('uses default pagination', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        data: ['map1'],
+        status: 200
+      });
+
+      const mapIDs = await client.getMapIDs();
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/maps?offset=0&limit=25'
+      );
+      expect(mapIDs).toEqual(['map1']);
+    });
+
+    it('accepts process and pagination', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        data: ['awesome_map'],
+        status: 200
+      });
+
+      const mapIDs = await client.getMapIDs(
+        'test_process',
+        new Pagination(5, 10)
+      );
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/maps?process=test_process&offset=5&limit=10'
+      );
+      expect(mapIDs).toEqual(['awesome_map']);
+    });
+
+    it('returns empty array if not found', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        status: 404
+      });
+
+      const mapIDs = await client.getMapIDs();
+      expect(axiosMock).toHaveBeenCalled();
+      expect(mapIDs).toEqual([]);
+    });
+
+    it('throws in case of error', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        status: 500,
+        statusText: 'BSOD'
+      });
+
+      const [err] = await to(client.getMapIDs());
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual(new Error('HTTP 500: BSOD'));
     });
   });
 });

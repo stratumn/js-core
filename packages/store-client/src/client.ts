@@ -15,6 +15,7 @@
 */
 
 import { Link, Segment } from '@stratumn/js-chainscript';
+import { Pagination } from './pagination';
 
 /**
  * IStoreClient provides access to the Stratumn Chainscript Store API.
@@ -40,4 +41,11 @@ export interface IStoreClient {
    * @returns the segment with its evidences (if any).
    */
   getSegment(linkHash: string): Promise<Segment | null>;
+
+  /**
+   * List existing map IDs.
+   * @param process (Optional) filter map IDs for this process.
+   * @param pagination (Optional) pagination options.
+   */
+  getMapIDs(process?: string, pagination?: Pagination): Promise<string[]>;
 }

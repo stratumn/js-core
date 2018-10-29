@@ -17,6 +17,7 @@
 import { fromSegmentObject, Link, Segment } from '@stratumn/js-chainscript';
 import axios from 'axios';
 import { IStoreClient } from './client';
+import { Pagination } from './pagination';
 
 /**
  * StoreHttpClient provides access to the Chainscript Store API via HTTP
@@ -41,9 +42,7 @@ export class StoreHttpClient implements IStoreClient {
 
   public async info(): Promise<void> {
     const response = await axios.get(this.storeUrl);
-    if (response.status !== 200) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    this.handleHttpErr(response);
 
     return response.data.adapter;
   }
@@ -53,9 +52,7 @@ export class StoreHttpClient implements IStoreClient {
       this.storeUrl + '/links',
       link.toObject({ bytes: String })
     );
-    if (response.status !== 200) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    this.handleHttpErr(response);
 
     const segment = fromSegmentObject(response.data);
     return segment;
@@ -66,11 +63,42 @@ export class StoreHttpClient implements IStoreClient {
     if (response.status === 404) {
       return null;
     }
-    if (response.status !== 200) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    this.handleHttpErr(response);
 
     const segment = fromSegmentObject(response.data);
     return segment;
+  }
+
+  public async getMapIDs(
+    process?: string,
+    pagination?: Pagination
+  ): Promise<string[]> {
+    let url = this.storeUrl + '/maps?';
+    if (process) {
+      url += 'process=' + process + '&';
+    }
+    if (pagination) {
+      url += 'offset=' + pagination.Offset + '&limit=' + pagination.Limit;
+    } else {
+      url += 'offset=0&limit=25';
+    }
+
+    const response = await axios.get(url);
+    if (response.status === 404) {
+      return [];
+    }
+    this.handleHttpErr(response);
+
+    return response.data;
+  }
+
+  /**
+   * Handle potential http errors and throw accordingly.
+   * @param response http response.
+   */
+  private handleHttpErr(response: any) {
+    if (response.status !== 200) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
   }
 }

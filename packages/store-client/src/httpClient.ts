@@ -15,7 +15,7 @@
 */
 
 import { fromSegmentObject, Link, Segment } from '@stratumn/js-chainscript';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { IStoreClient } from './client';
 import { Pagination } from './pagination';
 
@@ -27,6 +27,7 @@ import { Pagination } from './pagination';
  */
 export class StoreHttpClient implements IStoreClient {
   private storeUrl: string;
+  private reqConfig: AxiosRequestConfig;
 
   /**
    * Create an http client to interact with a Chainscript Store.
@@ -38,10 +39,16 @@ export class StoreHttpClient implements IStoreClient {
     } else {
       this.storeUrl = url;
     }
+
+    this.reqConfig = {
+      timeout: 10000,
+      // We want to handle http errors ourselves.
+      validateStatus: undefined
+    };
   }
 
   public async info(): Promise<void> {
-    const response = await axios.get(this.storeUrl);
+    const response = await axios.get(this.storeUrl, this.reqConfig);
     this.handleHttpErr(response);
 
     return response.data.adapter;
@@ -50,7 +57,8 @@ export class StoreHttpClient implements IStoreClient {
   public async createLink(link: Link): Promise<Segment> {
     const response = await axios.post(
       this.storeUrl + '/links',
-      link.toObject({ bytes: String })
+      link.toObject({ bytes: String }),
+      this.reqConfig
     );
     this.handleHttpErr(response);
 
@@ -59,7 +67,10 @@ export class StoreHttpClient implements IStoreClient {
   }
 
   public async getSegment(linkHash: string): Promise<Segment | null> {
-    const response = await axios.get(this.storeUrl + '/segments/' + linkHash);
+    const response = await axios.get(
+      this.storeUrl + '/segments/' + linkHash,
+      this.reqConfig
+    );
     if (response.status === 404) {
       return null;
     }
@@ -83,7 +94,7 @@ export class StoreHttpClient implements IStoreClient {
       url += 'offset=0&limit=25';
     }
 
-    const response = await axios.get(url);
+    const response = await axios.get(url, this.reqConfig);
     if (response.status === 404) {
       return [];
     }

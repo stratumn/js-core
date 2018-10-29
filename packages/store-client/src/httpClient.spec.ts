@@ -72,7 +72,10 @@ describe('store http client', () => {
       const res = await client.info();
 
       expect(axiosMock).toHaveBeenCalled();
-      expect(axiosMock).toHaveBeenCalledWith('https://store.stratumn.com');
+      expect(axiosMock).toHaveBeenCalledWith('https://store.stratumn.com', {
+        timeout: 10000,
+        validateStatus: undefined
+      });
       expect(res).toBe(info);
     });
   });
@@ -99,7 +102,8 @@ describe('store http client', () => {
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith(
         'https://store.stratumn.com/links',
-        SimpleLinkObject
+        SimpleLinkObject,
+        { timeout: 10000, validateStatus: undefined }
       );
       expect(segment.linkHash()).toEqual(SimpleLink.hash());
     });
@@ -143,7 +147,8 @@ describe('store http client', () => {
 
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith(
-        'https://store.stratumn.com/segments/d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592'
+        'https://store.stratumn.com/segments/d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592',
+        { timeout: 10000, validateStatus: undefined }
       );
       expect(segment).toEqual(SimpleLink.segmentify());
     });
@@ -160,7 +165,8 @@ describe('store http client', () => {
       const mapIDs = await client.getMapIDs('', new Pagination(10, 10));
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith(
-        'https://store.stratumn.com/maps?offset=10&limit=10'
+        'https://store.stratumn.com/maps?offset=10&limit=10',
+        { timeout: 10000, validateStatus: undefined }
       );
       expect(mapIDs).toEqual(['map1', 'map2']);
     });
@@ -175,7 +181,8 @@ describe('store http client', () => {
       const mapIDs = await client.getMapIDs();
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith(
-        'https://store.stratumn.com/maps?offset=0&limit=25'
+        'https://store.stratumn.com/maps?offset=0&limit=25',
+        { timeout: 10000, validateStatus: undefined }
       );
       expect(mapIDs).toEqual(['map1']);
     });
@@ -193,7 +200,8 @@ describe('store http client', () => {
       );
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith(
-        'https://store.stratumn.com/maps?process=test_process&offset=5&limit=10'
+        'https://store.stratumn.com/maps?process=test_process&offset=5&limit=10',
+        { timeout: 10000, validateStatus: undefined }
       );
       expect(mapIDs).toEqual(['awesome_map']);
     });

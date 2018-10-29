@@ -18,7 +18,7 @@ import to from 'await-to-js';
 import axios from 'axios';
 import WebSocket from 'isomorphic-ws';
 import { FossilizedEvent } from './events';
-import { FossilizerHttpClient } from './fossilizerClient';
+import { FossilizerHttpClient } from './httpClient';
 
 jest.mock('axios');
 jest.mock('isomorphic-ws');

@@ -19,8 +19,8 @@ import { Pagination } from './pagination';
 describe('pagination', () => {
   it('creates pagination options', () => {
     const p = new Pagination(10, 25);
-    expect(p.Offset).toBe(10);
-    expect(p.Limit).toBe(25);
+    expect(p.offset).toBe(10);
+    expect(p.limit).toBe(25);
   });
 
   it('rejects invalid offset', () => {

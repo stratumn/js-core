@@ -89,7 +89,7 @@ export class StoreHttpClient implements IStoreClient {
       url += 'process=' + process + '&';
     }
     if (pagination) {
-      url += 'offset=' + pagination.Offset + '&limit=' + pagination.Limit;
+      url += 'offset=' + pagination.offset + '&limit=' + pagination.limit;
     } else {
       url += 'offset=0&limit=25';
     }

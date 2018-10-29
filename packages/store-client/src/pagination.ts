@@ -18,8 +18,8 @@
  * Pagination options for most APIs.
  */
 export class Pagination {
-  public Offset: number;
-  public Limit: number;
+  public offset: number;
+  public limit: number;
 
   constructor(offset: number, limit: number) {
     if (offset < 0) {
@@ -29,7 +29,7 @@ export class Pagination {
       throw new Error('Invalid limit: should be a strictly-positive integer.');
     }
 
-    this.Offset = offset;
-    this.Limit = limit;
+    this.offset = offset;
+    this.limit = limit;
   }
 }

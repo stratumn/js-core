@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import { Link, Segment } from '@stratumn/js-chainscript';
+import { Evidence, Link, Segment } from '@stratumn/js-chainscript';
 import { Pagination } from './pagination';
 import { Segments } from './segments';
 import { SegmentsFilter } from './segmentsFilter';
@@ -62,4 +62,14 @@ export interface IStoreClient {
    * @returns a list of map IDs (if any).
    */
   getMapIDs(process?: string, pagination?: Pagination): Promise<string[]>;
+
+  /**
+   * Add an evidence to a given link.
+   * Evidences are stored inside the segment's meta field.
+   * An evidence is an external proof of existence of the link (for example a
+   * proof of inclusion on the Bitcoin blockchain via a fossilizer).
+   * @param linkHash hex-encoded hash of the link to add evidence to.
+   * @param evidence to add to the link's segment.
+   */
+  addEvidence(linkHash: string, evidence: Evidence): Promise<void>;
 }

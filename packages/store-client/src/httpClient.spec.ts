@@ -16,6 +16,7 @@
 
 import to from 'await-to-js';
 import axios from 'axios';
+import { BTCEvidence, BTCEvidenceObject } from '../test/fixtures/evidences';
 import {
   SimpleLink,
   SimpleLinkObject,
@@ -155,7 +156,7 @@ describe('store http client', () => {
     });
   });
 
-  describe('findSegments', () => {
+  describe('find segments', () => {
     it('sets default pagination', async () => {
       axiosMock = jest.spyOn(axios, 'get');
       axiosMock.mockResolvedValue({
@@ -247,7 +248,7 @@ describe('store http client', () => {
     });
   });
 
-  describe('getMapIDs', () => {
+  describe('get map IDs', () => {
     it('accepts empty process', async () => {
       axiosMock = jest.spyOn(axios, 'get');
       axiosMock.mockResolvedValue({
@@ -336,6 +337,35 @@ describe('store http client', () => {
       const [err] = await to(client.getMapIDs());
       expect(axiosMock).toHaveBeenCalled();
       expect(err).toEqual(new Error('HTTP 500: BSOD'));
+    });
+  });
+
+  describe('add evidence', () => {
+    it('adds valid evidence', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({ status: 200 });
+
+      await client.addEvidence('l1', BTCEvidence);
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/evidences/l1',
+        BTCEvidenceObject,
+        { timeout: 10000, validateStatus: undefined }
+      );
+    });
+
+    it('throws in case of error', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        status: 500,
+        statusText: 'Server is on fire'
+      });
+
+      const [err] = await to(client.addEvidence('42', BTCEvidence));
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual(new Error('HTTP 500: Server is on fire'));
     });
   });
 });

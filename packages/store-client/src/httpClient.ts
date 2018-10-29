@@ -14,7 +14,12 @@
   limitations under the License.
 */
 
-import { fromSegmentObject, Link, Segment } from '@stratumn/js-chainscript';
+import {
+  Evidence,
+  fromSegmentObject,
+  Link,
+  Segment
+} from '@stratumn/js-chainscript';
 import axios, { AxiosRequestConfig } from 'axios';
 import { IStoreClient } from './client';
 import { Pagination } from './pagination';
@@ -135,6 +140,18 @@ export class StoreHttpClient implements IStoreClient {
     this.handleHttpErr(response);
 
     return response.data;
+  }
+
+  public async addEvidence(
+    linkHash: string,
+    evidence: Evidence
+  ): Promise<void> {
+    const response = await axios.post(
+      this.storeUrl + '/evidences/' + linkHash,
+      evidence.toObject({ bytes: String }),
+      this.reqConfig
+    );
+    this.handleHttpErr(response);
   }
 
   /**

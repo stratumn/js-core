@@ -61,7 +61,16 @@ export class StoreHttpClient implements IStoreClient {
     return segment;
   }
 
-  public getSegment(linkHash: string): Promise<Segment> {
-    throw new Error('not implemented: ' + linkHash);
+  public async getSegment(linkHash: string): Promise<Segment | null> {
+    const response = await axios.get(this.storeUrl + '/segments/' + linkHash);
+    if (response.status === 404) {
+      return null;
+    }
+    if (response.status !== 200) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const segment = fromSegmentObject(response.data);
+    return segment;
   }
 }

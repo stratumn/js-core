@@ -39,5 +39,5 @@ export interface IStoreClient {
    * @param linkHash hex-encoded link hash.
    * @returns the segment with its evidences (if any).
    */
-  getSegment(linkHash: string): Promise<Segment>;
+  getSegment(linkHash: string): Promise<Segment | null>;
 }

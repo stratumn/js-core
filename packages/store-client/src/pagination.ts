@@ -20,8 +20,9 @@
 export class Pagination {
   public offset: number;
   public limit: number;
+  public reverse: boolean;
 
-  constructor(offset: number, limit: number) {
+  constructor(offset: number, limit: number, reverse?: boolean) {
     if (offset < 0) {
       throw new Error('Invalid offset: should be a positive integer.');
     }
@@ -31,5 +32,27 @@ export class Pagination {
 
     this.offset = offset;
     this.limit = limit;
+    this.reverse = false;
+    if (reverse) {
+      this.reverse = reverse;
+    }
+  }
+
+  /**
+   * Converts to a plain Javascript object with default values removed.
+   * This is useful to avoid bloat when converting to url query parameters.
+   */
+  public toObject(): any {
+    const plainObj = {
+      limit: this.limit,
+      offset: this.offset,
+      reverse: this.reverse
+    };
+
+    if (!this.reverse) {
+      delete plainObj.reverse;
+    }
+
+    return plainObj;
   }
 }

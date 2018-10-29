@@ -21,6 +21,12 @@ describe('pagination', () => {
     const p = new Pagination(10, 25);
     expect(p.offset).toBe(10);
     expect(p.limit).toBe(25);
+    expect(p.reverse).toBeFalsy();
+  });
+
+  it('sets reverse order', () => {
+    const p = new Pagination(10, 10, true);
+    expect(p.reverse).toBeTruthy();
   });
 
   it('rejects invalid offset', () => {
@@ -29,5 +35,13 @@ describe('pagination', () => {
 
   it('rejects invalid limit', () => {
     expect(() => new Pagination(10, 0)).toThrow();
+  });
+
+  it('hides default reverse', () => {
+    const o = new Pagination(0, 10).toObject();
+    expect(o).toEqual({
+      limit: 10,
+      offset: 0
+    });
   });
 });

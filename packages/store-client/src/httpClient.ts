@@ -18,6 +18,8 @@ import { fromSegmentObject, Link, Segment } from '@stratumn/js-chainscript';
 import axios, { AxiosRequestConfig } from 'axios';
 import { IStoreClient } from './client';
 import { Pagination } from './pagination';
+import { Segments } from './segments';
+import { SegmentsFilter } from './segmentsFilter';
 
 /**
  * StoreHttpClient provides access to the Chainscript Store API via HTTP
@@ -78,6 +80,33 @@ export class StoreHttpClient implements IStoreClient {
 
     const segment = fromSegmentObject(response.data);
     return segment;
+  }
+
+  public async findSegments(
+    filters?: SegmentsFilter,
+    pagination?: Pagination
+  ): Promise<Segments> {
+    // Add default pagination and filters if not provided.
+    if (!pagination) {
+      pagination = new Pagination(0, 25);
+    }
+    if (!filters) {
+      filters = new SegmentsFilter();
+    }
+
+    const response = await axios.get(this.storeUrl + '/segments', {
+      ...this.reqConfig,
+      params: {
+        ...filters.toObject(),
+        ...pagination.toObject()
+      }
+    });
+    if (response.status === 404) {
+      return new Segments(0, []);
+    }
+    this.handleHttpErr(response);
+
+    return new Segments(response.data.totalCount, response.data.segments);
   }
 
   public async getMapIDs(

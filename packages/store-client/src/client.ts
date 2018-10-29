@@ -16,6 +16,8 @@
 
 import { Link, Segment } from '@stratumn/js-chainscript';
 import { Pagination } from './pagination';
+import { Segments } from './segments';
+import { SegmentsFilter } from './segmentsFilter';
 
 /**
  * IStoreClient provides access to the Stratumn Chainscript Store API.
@@ -43,9 +45,21 @@ export interface IStoreClient {
   getSegment(linkHash: string): Promise<Segment | null>;
 
   /**
+   * Find segments that match a set of filters.
+   * @param filters (Optional) segments filtering options.
+   * @param pagination (Optional) pagination options.
+   * @returns a list of segments with pagination details.
+   */
+  findSegments(
+    filters?: SegmentsFilter,
+    pagination?: Pagination
+  ): Promise<Segments>;
+
+  /**
    * List existing map IDs.
    * @param process (Optional) filter map IDs for this process.
    * @param pagination (Optional) pagination options.
+   * @returns a list of map IDs (if any).
    */
   getMapIDs(process?: string, pagination?: Pagination): Promise<string[]>;
 }

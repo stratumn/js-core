@@ -23,6 +23,7 @@ import {
 } from '../test/fixtures/simpleSegment';
 import { StoreHttpClient } from './httpClient';
 import { Pagination } from './pagination';
+import { SegmentsFilter } from './segmentsFilter';
 
 jest.mock('axios');
 
@@ -151,6 +152,98 @@ describe('store http client', () => {
         { timeout: 10000, validateStatus: undefined }
       );
       expect(segment).toEqual(SimpleLink.segmentify());
+    });
+  });
+
+  describe('findSegments', () => {
+    it('sets default pagination', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        data: {
+          segments: [SimpleSegmentObject],
+          totalCount: 15
+        },
+        status: 200
+      });
+
+      const s = await client.findSegments();
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/segments',
+        {
+          params: {
+            limit: 25,
+            offset: 0
+          },
+          timeout: 10000,
+          validateStatus: undefined
+        }
+      );
+      expect(s.totalCount).toEqual(15);
+      expect(s.segments).toEqual([SimpleLink.segmentify()]);
+    });
+
+    it('encodes complex filters', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        data: {
+          segments: [SimpleSegmentObject],
+          totalCount: 5
+        },
+        status: 200
+      });
+
+      const s = await client.findSegments(
+        new SegmentsFilter('p')
+          .withStep('s')
+          .withoutParent()
+          .withLinkHashes('l1', 'l2')
+          .withMapIDs('m1')
+          .withTags('t1', 't2'),
+        new Pagination(6, 3)
+      );
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/segments',
+        {
+          params: {
+            limit: 3,
+            linkHashes: ['l1', 'l2'],
+            mapIds: ['m1'],
+            offset: 6,
+            process: 'p',
+            step: 's',
+            tags: ['t1', 't2'],
+            withoutParent: true
+          },
+          timeout: 10000,
+          validateStatus: undefined
+        }
+      );
+      expect(s.totalCount).toEqual(5);
+      expect(s.segments).toEqual([SimpleLink.segmentify()]);
+    });
+
+    it('throws in case of error', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({ status: 503, statusText: 'Unavailable' });
+
+      const [err] = await to(client.findSegments());
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual(new Error('HTTP 503: Unavailable'));
+    });
+
+    it('returns empty list if not found', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({ status: 404, statusText: 'Not Found' });
+
+      const segments = await client.findSegments();
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(segments.totalCount).toEqual(0);
+      expect(segments.segments).toEqual([]);
     });
   });
 

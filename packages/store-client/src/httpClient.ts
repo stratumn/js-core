@@ -113,17 +113,22 @@ export class StoreHttpClient implements IStoreClient {
     process?: string,
     pagination?: Pagination
   ): Promise<string[]> {
-    let url = this.storeUrl + '/maps?';
-    if (process) {
-      url += 'process=' + process + '&';
-    }
-    if (pagination) {
-      url += 'offset=' + pagination.offset + '&limit=' + pagination.limit;
-    } else {
-      url += 'offset=0&limit=25';
+    if (!pagination) {
+      pagination = new Pagination(0, 25);
     }
 
-    const response = await axios.get(url, this.reqConfig);
+    const params = {
+      ...pagination.toObject()
+    };
+
+    if (process) {
+      params.process = process;
+    }
+
+    const response = await axios.get(this.storeUrl + '/maps', {
+      ...this.reqConfig,
+      params
+    });
     if (response.status === 404) {
       return [];
     }

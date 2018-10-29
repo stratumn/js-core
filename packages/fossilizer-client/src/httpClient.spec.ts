@@ -192,7 +192,10 @@ describe('fossilizer http client', () => {
       const res = await client.info();
 
       expect(axiosMock).toHaveBeenCalled();
-      expect(axiosMock).toHaveBeenCalledWith('https://fossilize.stratumn.com');
+      expect(axiosMock).toHaveBeenCalledWith('https://fossilize.stratumn.com', {
+        timeout: 10000,
+        validateStatus: undefined
+      });
       expect(res).toBe(fossInfo);
     });
   });
@@ -228,7 +231,11 @@ describe('fossilizer http client', () => {
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith(
         'https://fossilize.stratumn.com/fossils',
-        { data: '4242', meta: 'batman' }
+        { data: '4242', meta: 'batman' },
+        {
+          timeout: 10000,
+          validateStatus: undefined
+        }
       );
     });
 
@@ -244,7 +251,11 @@ describe('fossilizer http client', () => {
       expect(axiosMock).toHaveBeenCalled();
       expect(axiosMock).toHaveBeenCalledWith(
         'https://fossilize.stratumn.com/fossils',
-        { data: '4242', meta: JSON.stringify({ user: 'batman', age: 42 }) }
+        { data: '4242', meta: JSON.stringify({ user: 'batman', age: 42 }) },
+        {
+          timeout: 10000,
+          validateStatus: undefined
+        }
       );
     });
   });

@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import WebSocket from 'isomorphic-ws';
 import { IFossilizerClient } from './client';
 import { DID_FOSSILIZE_LINK_EVENT, FossilizedEvent } from './events';
@@ -27,6 +27,7 @@ import { DID_FOSSILIZE_LINK_EVENT, FossilizedEvent } from './events';
  */
 export class FossilizerHttpClient implements IFossilizerClient {
   private fossilizerUrl: string;
+  private reqConfig: AxiosRequestConfig;
   private socket: WebSocket | null;
 
   /**
@@ -44,6 +45,12 @@ export class FossilizerHttpClient implements IFossilizerClient {
     } else {
       this.fossilizerUrl = url;
     }
+
+    this.reqConfig = {
+      timeout: 10000,
+      // We want to handle http errors ourselves.
+      validateStatus: undefined
+    };
 
     this.socket = null;
 
@@ -67,10 +74,8 @@ export class FossilizerHttpClient implements IFossilizerClient {
   }
 
   public async info(): Promise<any> {
-    const response = await axios.get(this.fossilizerUrl);
-    if (response.status !== 200) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    const response = await axios.get(this.fossilizerUrl, this.reqConfig);
+    this.handleHttpErr(response);
 
     return response.data.adapter;
   }
@@ -81,7 +86,19 @@ export class FossilizerHttpClient implements IFossilizerClient {
         ? { data, meta }
         : { data, meta: JSON.stringify(meta) };
 
-    const response = await axios.post(this.fossilizerUrl + '/fossils', fossil);
+    const response = await axios.post(
+      this.fossilizerUrl + '/fossils',
+      fossil,
+      this.reqConfig
+    );
+    this.handleHttpErr(response);
+  }
+
+  /**
+   * Handle potential http errors and throw accordingly.
+   * @param response http response.
+   */
+  private handleHttpErr(response: any) {
     if (response.status !== 200) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }

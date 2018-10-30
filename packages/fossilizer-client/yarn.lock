@@ -79,9 +79,9 @@
     bignumber.js "^4.1.0"
 
 "@stratumn/js-chainscript@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.1.tgz#b19f2a92c07c0dbb66afdf9d789835d6e914b027"
-  integrity sha512-gRKyJHjBNtcTUCsXpA2Ur+NXZPlCVPBe+rszVZ9Ro9YNnwwyZ0dtMI2KAfCmwg6j/bTdQg0AKNTbmABFxBf2QQ==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.2.tgz#f59bacf4a699a88ea7d88365cbbd2b63f63cea9e"
+  integrity sha512-hSvBihZDKVAnXxzR+csleGnF0usoyO60zNJ/K/3t9qmjN799fPRPc9gc6sEaEQPQtVNv1vXijTESRlJYpUvOaA==
   dependencies:
     "@stratumn/canonicaljson" "^1.0.2"
     "@stratumn/js-crypto" "0.1.0"

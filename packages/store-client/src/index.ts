@@ -14,10 +14,8 @@
   limitations under the License.
 */
 
-import { StoreClient } from './storeClient';
-
-describe('store client', () => {
-  it('says hello', () => {
-    expect(new StoreClient().greet()).toBe('hello');
-  });
-});
+export { IStoreClient } from './client';
+export { StoreHttpClient } from './httpClient';
+export { Pagination } from './pagination';
+export { Segments } from './segments';
+export { SegmentsFilter } from './segmentsFilter';

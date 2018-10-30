@@ -12,8 +12,8 @@
   "author": "Stratumn Team",
   "homepage": "https://github.com/stratumn/js-core#readme",
   "license": "Apache-2.0",
-  "main": "lib/storeClient.js",
-  "typings": "lib/storeClient.d.ts",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
@@ -47,5 +47,14 @@
       "\\.ts$": "ts-jest"
     },
     "testRegex": "/src/.*\\.spec\\.ts$"
+  },
+  "dependencies": {
+    "@stratumn/js-chainscript": "^1.0.2",
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.7",
+    "await-to-js": "^2.0.1",
+    "jest": "^23.6.0"
   }
 }

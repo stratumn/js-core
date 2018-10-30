@@ -14,8 +14,17 @@
   limitations under the License.
 */
 
-export class StoreClient {
-  public greet() {
-    return 'hello';
+import { fromSegmentObject, Segment } from '@stratumn/js-chainscript';
+
+/**
+ * A list of segments with pagination details.
+ */
+export class Segments {
+  public totalCount: number;
+  public segments: Segment[];
+
+  constructor(totalCount: number, segments: any[]) {
+    this.totalCount = totalCount;
+    this.segments = segments.map(fromSegmentObject);
   }
 }

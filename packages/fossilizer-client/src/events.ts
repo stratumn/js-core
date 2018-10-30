@@ -25,6 +25,10 @@ export class FossilizedEvent {
   public meta: string | object;
   public evidence: Evidence;
 
+  /**
+   * Create a structured event object.
+   * @param message the `data` field in the incoming socket message.
+   */
   constructor(message: any) {
     this.data = Buffer.from(message.Data, 'base64').toString('hex');
     this.meta = Buffer.from(message.Meta, 'base64').toString();

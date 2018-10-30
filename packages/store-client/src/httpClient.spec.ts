@@ -16,17 +16,20 @@
 
 import to from 'await-to-js';
 import axios from 'axios';
+import WebSocket from 'isomorphic-ws';
 import { BTCEvidence, BTCEvidenceObject } from '../test/fixtures/evidences';
 import {
   SimpleLink,
   SimpleLinkObject,
   SimpleSegmentObject
 } from '../test/fixtures/simpleSegment';
+import { StoreEvent } from './events';
 import { StoreHttpClient } from './httpClient';
 import { Pagination } from './pagination';
 import { SegmentsFilter } from './segmentsFilter';
 
 jest.mock('axios');
+jest.mock('isomorphic-ws');
 
 describe('store http client', () => {
   const client = new StoreHttpClient('https://store.stratumn.com');
@@ -36,6 +39,95 @@ describe('store http client', () => {
     if (axiosMock) {
       axiosMock.mockRestore();
     }
+  });
+
+  describe('ctor', () => {
+    // Mock the WebSocket.on() method to accept an 'open' call and return a
+    // custom websocket message once.
+    const mockSocketOn = (message: string) => (
+      event: string,
+      callback: any
+    ) => {
+      if (event === 'open') {
+        callback();
+      } else if (event === 'message') {
+        callback(message);
+      }
+    };
+
+    it('opens a websocket with the store', done => {
+      (WebSocket as any).mockImplementationOnce((url: string) => {
+        expect(url).toBe('http://localhost:5000/websocket');
+        return {
+          on: (event: string) => {
+            expect(event).toBe('open');
+            done();
+          }
+        };
+      });
+
+      const wsClient = new StoreHttpClient('http://localhost:5000/', () => {
+        // This handler shouldn't be invoked in this test.
+        expect(true).toBeFalsy();
+      });
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
+    it('ignores malformed events', () => {
+      (WebSocket as any).mockImplementationOnce(() => {
+        return {
+          on: mockSocketOn('{ not valid JSON')
+        };
+      });
+
+      const wsClient = new StoreHttpClient('http://localhost:5000', () => {
+        // This handler shouldn't be invoked in this test.
+        expect(true).toBeFalsy();
+      });
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
+    it('ignores unknown event types', () => {
+      (WebSocket as any).mockImplementationOnce(() => {
+        return {
+          on: mockSocketOn(JSON.stringify({ type: 'unknown' }))
+        };
+      });
+
+      const wsClient = new StoreHttpClient('http://localhost:5000', () => {
+        // This handler shouldn't be invoked in this test.
+        expect(true).toBeFalsy();
+      });
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
+
+    it('receives store events', () => {
+      (WebSocket as any).mockImplementationOnce(() => {
+        return {
+          on: mockSocketOn(
+            JSON.stringify({ type: 'SavedLinks', data: [SimpleLinkObject] })
+          )
+        };
+      });
+
+      const wsClient = new StoreHttpClient(
+        'http://localhost:5000',
+        (e: StoreEvent) => {
+          expect(e.type).toEqual('SavedLinks');
+          expect(e.evidences).toEqual([]);
+          expect(e.links).toEqual([SimpleLink]);
+        }
+      );
+
+      expect(wsClient).not.toBeNull();
+      expect(WebSocket).toHaveBeenCalled();
+    });
   });
 
   describe('info', () => {

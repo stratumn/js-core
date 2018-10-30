@@ -21,7 +21,9 @@ import {
   Segment
 } from '@stratumn/js-chainscript';
 import axios, { AxiosRequestConfig } from 'axios';
+import WebSocket from 'isomorphic-ws';
 import { IStoreClient } from './client';
+import { StoreEvent } from './events';
 import { Pagination } from './pagination';
 import { Segments } from './segments';
 import { SegmentsFilter } from './segmentsFilter';
@@ -35,12 +37,18 @@ import { SegmentsFilter } from './segmentsFilter';
 export class StoreHttpClient implements IStoreClient {
   private storeUrl: string;
   private reqConfig: AxiosRequestConfig;
+  private socket: WebSocket | null;
 
   /**
    * Create an http client to interact with a Chainscript Store.
+   * If you provide an eventHandler, a websocket connection will be opened
+   * with the store and events will be forwarded to your handler.
    * @param url of the store API.
+   * @param eventHandler (optional) event handler for store notifications.
+   * The store will send notifications when links are created and new evidence
+   * is added.
    */
-  constructor(url: string) {
+  constructor(url: string, eventHandler?: (e: StoreEvent) => void) {
     if (url.endsWith('/')) {
       this.storeUrl = url.substring(0, url.length - 1);
     } else {
@@ -52,6 +60,24 @@ export class StoreHttpClient implements IStoreClient {
       // We want to handle http errors ourselves.
       validateStatus: undefined
     };
+
+    this.socket = null;
+
+    if (eventHandler) {
+      this.socket = new WebSocket(this.storeUrl + '/websocket');
+      this.socket.on('open', () => {
+        (this.socket as WebSocket).on('message', (jsonPayload: string) => {
+          try {
+            const message = JSON.parse(jsonPayload);
+            const event = new StoreEvent(message);
+            eventHandler(event);
+          } catch {
+            // We currently ignore event errors.
+            // We will log them once we have a logging infrastructure.
+          }
+        });
+      });
+    }
   }
 
   public async info(): Promise<any> {

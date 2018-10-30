@@ -14,7 +14,8 @@
   limitations under the License.
 */
 
-import { IStoreClient } from './client';
-import { StoreHttpClient } from './httpClient';
-
-export { IStoreClient, StoreHttpClient };
+export { IStoreClient } from './client';
+export { StoreHttpClient } from './httpClient';
+export { Pagination } from './pagination';
+export { Segments } from './segments';
+export { SegmentsFilter } from './segmentsFilter';

@@ -174,7 +174,7 @@ describe('store http client', () => {
         'https://store.stratumn.com/segments',
         {
           params: {
-            limit: 25,
+            limit: 20,
             offset: 0
           },
           timeout: 10000,
@@ -281,7 +281,7 @@ describe('store http client', () => {
       expect(axiosMock).toHaveBeenCalledWith(
         'https://store.stratumn.com/maps',
         {
-          params: { offset: 0, limit: 25 },
+          params: { offset: 0, limit: 20 },
           timeout: 10000,
           validateStatus: undefined
         }

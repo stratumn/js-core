@@ -54,7 +54,7 @@ export class StoreHttpClient implements IStoreClient {
     };
   }
 
-  public async info(): Promise<void> {
+  public async info(): Promise<any> {
     const response = await axios.get(this.storeUrl, this.reqConfig);
     this.handleHttpErr(response);
 
@@ -93,7 +93,7 @@ export class StoreHttpClient implements IStoreClient {
   ): Promise<Segments> {
     // Add default pagination and filters if not provided.
     if (!pagination) {
-      pagination = new Pagination(0, 25);
+      pagination = new Pagination(0, 20);
     }
     if (!filters) {
       filters = new SegmentsFilter();
@@ -119,7 +119,7 @@ export class StoreHttpClient implements IStoreClient {
     pagination?: Pagination
   ): Promise<string[]> {
     if (!pagination) {
-      pagination = new Pagination(0, 25);
+      pagination = new Pagination(0, 20);
     }
 
     const params = {

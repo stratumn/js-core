@@ -32,10 +32,7 @@ export class Pagination {
 
     this.offset = offset;
     this.limit = limit;
-    this.reverse = false;
-    if (reverse) {
-      this.reverse = reverse;
-    }
+    this.reverse = !!reverse;
   }
 
   /**

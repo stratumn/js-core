@@ -27,6 +27,7 @@ describe('pagination', () => {
   it('sets reverse order', () => {
     const p = new Pagination(10, 10, true);
     expect(p.reverse).toBeTruthy();
+    expect(p.toObject().reverse).toBeTruthy();
   });
 
   it('rejects invalid offset', () => {

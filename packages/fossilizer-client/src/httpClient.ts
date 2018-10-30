@@ -58,15 +58,15 @@ export class FossilizerHttpClient implements IFossilizerClient {
       this.socket = new WebSocket(this.fossilizerUrl + '/websocket');
       this.socket.on('open', () => {
         (this.socket as WebSocket).on('message', (jsonPayload: string) => {
-          const message = JSON.parse(jsonPayload);
-          if (message.type === DID_FOSSILIZE_LINK_EVENT) {
-            try {
+          try {
+            const message = JSON.parse(jsonPayload);
+            if (message.type === DID_FOSSILIZE_LINK_EVENT) {
               const event = new FossilizedEvent(message.data);
               eventHandler(event);
-            } catch {
-              // We currently ignore event errors.
-              // We will log them once we have a logging infrastructure.
             }
+          } catch {
+            // We currently ignore event errors.
+            // We will log them once we have a logging infrastructure.
           }
         });
       });

@@ -97,7 +97,10 @@ If you are interested in logging the events raised by this package, here is how
 you can do it:
 
 ```javascript
-import { FossilizerHttpClient } from "@stratumn/fossilizer-client";
+import {
+  FossilizedEvent,
+  FossilizerHttpClient
+} from "@stratumn/fossilizer-client";
 
 // Custom client that sends logging events to the console.
 const client = new FossilizerHttpClient(

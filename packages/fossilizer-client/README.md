@@ -89,3 +89,32 @@ await client.fossilize(
   "batman is down"
 );
 ```
+
+### Provide a custom logger
+
+The http client accepts an optional logger argument.
+If you are interested in logging the events raised by this package, here is how
+you can do it:
+
+```javascript
+import { FossilizerHttpClient } from "@stratumn/fossilizer-client";
+
+// Custom client that sends logging events to the console.
+const client = new FossilizerHttpClient(
+  "http://localhost:6000/",
+  (e: FossilizedEvent) => {
+    console.info(e);
+  },
+  {
+    info(event: any) {
+      console.info(event);
+    },
+    warn(event: any) {
+      console.warn(event);
+    },
+    error(event: any) {
+      console.error(event);
+    }
+  }
+);
+```

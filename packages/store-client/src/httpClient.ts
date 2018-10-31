@@ -78,6 +78,18 @@ export class StoreHttpClient implements IStoreClient {
     }
   }
 
+  /**
+   * Set the request timeout value.
+   * @param timeoutMS timeout in milliseconds.
+   */
+  public setRequestTimeout(timeoutMS: number) {
+    if (timeoutMS <= 0) {
+      throw new Error('Timeout should be a strictly positive value');
+    }
+
+    this.reqConfig.timeout = timeoutMS;
+  }
+
   public async info(): Promise<any> {
     const response = await axios.get(this.storeUrl, this.reqConfig);
     this.handleHttpErr(response);

@@ -132,6 +132,19 @@ describe('store http client', () => {
     });
   });
 
+  describe('timeout', () => {
+    it('rejects negative values', () => {
+      const c = new StoreHttpClient('http://localhost');
+      expect(() => c.setRequestTimeout(-1)).toThrow();
+    });
+
+    it('sets request timeout', () => {
+      const c = new StoreHttpClient('http://localhost');
+      c.setRequestTimeout(42);
+      expect((c as any).reqConfig.timeout).toEqual(42);
+    });
+  });
+
   describe('info', () => {
     it('throws in case of network error', async () => {
       axiosMock = jest.spyOn(axios, 'get');

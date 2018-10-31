@@ -17,6 +17,7 @@
 import to from 'await-to-js';
 import axios from 'axios';
 import WebSocket from 'isomorphic-ws';
+import { mocked } from 'ts-jest/utils';
 import { FossilizedEvent } from './events';
 import { FossilizerHttpClient } from './httpClient';
 
@@ -25,6 +26,7 @@ jest.mock('isomorphic-ws');
 
 describe('fossilizer http client', () => {
   const client = new FossilizerHttpClient('https://fossilize.stratumn.com');
+  const mockSocket = mocked(WebSocket);
   let axiosMock: jest.SpyInstance;
 
   afterEach(() => {
@@ -48,7 +50,7 @@ describe('fossilizer http client', () => {
     };
 
     it('appends websocket path', () => {
-      (WebSocket as any).mockImplementationOnce((url: string) => {
+      mockSocket.mockImplementationOnce((url: string) => {
         expect(url).toBe('http://localhost:6000/websocket');
       });
 
@@ -65,7 +67,7 @@ describe('fossilizer http client', () => {
     });
 
     it('opens a websocket with the fossilizer', done => {
-      (WebSocket as any).mockImplementationOnce(() => {
+      mockSocket.mockImplementationOnce(() => {
         return {
           on: (event: string) => {
             expect(event).toBe('open');
@@ -84,7 +86,7 @@ describe('fossilizer http client', () => {
     });
 
     it('receives fossilizer events', done => {
-      (WebSocket as any).mockImplementationOnce(() => {
+      mockSocket.mockImplementationOnce(() => {
         return {
           on: mockSocketOn(
             JSON.stringify({
@@ -119,7 +121,7 @@ describe('fossilizer http client', () => {
     });
 
     it('ignores unknown event type', () => {
-      (WebSocket as any).mockImplementationOnce(() => {
+      mockSocket.mockImplementationOnce(() => {
         return {
           on: mockSocketOn(JSON.stringify({ type: 'DidSaveLink' }))
         };
@@ -135,7 +137,7 @@ describe('fossilizer http client', () => {
     });
 
     it('ignores invalid events', () => {
-      (WebSocket as any).mockImplementationOnce(() => {
+      mockSocket.mockImplementationOnce(() => {
         return {
           on: mockSocketOn(
             JSON.stringify({

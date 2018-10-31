@@ -17,6 +17,7 @@
 import to from 'await-to-js';
 import axios from 'axios';
 import WebSocket from 'isomorphic-ws';
+import { mocked } from 'ts-jest/utils';
 import { BTCEvidence, BTCEvidenceObject } from '../test/fixtures/evidences';
 import {
   SimpleLink,
@@ -33,6 +34,7 @@ jest.mock('isomorphic-ws');
 
 describe('store http client', () => {
   const client = new StoreHttpClient('https://store.stratumn.com');
+  const mockSocket = mocked(WebSocket);
   let axiosMock: jest.SpyInstance;
 
   afterEach(() => {
@@ -56,7 +58,7 @@ describe('store http client', () => {
     };
 
     it('opens a websocket with the store', done => {
-      (WebSocket as any).mockImplementationOnce((url: string) => {
+      mockSocket.mockImplementationOnce((url: string) => {
         expect(url).toBe('http://localhost:5000/websocket');
         return {
           on: (event: string) => {
@@ -76,7 +78,7 @@ describe('store http client', () => {
     });
 
     it('ignores malformed events', () => {
-      (WebSocket as any).mockImplementationOnce(() => {
+      mockSocket.mockImplementationOnce(() => {
         return {
           on: mockSocketOn('{ not valid JSON')
         };
@@ -92,7 +94,7 @@ describe('store http client', () => {
     });
 
     it('ignores unknown event types', () => {
-      (WebSocket as any).mockImplementationOnce(() => {
+      mockSocket.mockImplementationOnce(() => {
         return {
           on: mockSocketOn(JSON.stringify({ type: 'unknown' }))
         };
@@ -108,7 +110,7 @@ describe('store http client', () => {
     });
 
     it('receives store events', () => {
-      (WebSocket as any).mockImplementationOnce(() => {
+      mockSocket.mockImplementationOnce(() => {
         return {
           on: mockSocketOn(
             JSON.stringify({ type: 'SavedLinks', data: [SimpleLinkObject] })

@@ -18,6 +18,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import WebSocket from 'isomorphic-ws';
 import { IFossilizerClient } from './client';
 import { DID_FOSSILIZE_LINK_EVENT, FossilizedEvent } from './events';
+import { ILogger } from './logger';
 
 /**
  * FossilizerHttpClient provides access to the Chainscript fossilizer API
@@ -27,8 +28,10 @@ import { DID_FOSSILIZE_LINK_EVENT, FossilizedEvent } from './events';
  */
 export class FossilizerHttpClient implements IFossilizerClient {
   private fossilizerUrl: string;
-  private reqConfig: AxiosRequestConfig;
   private socket?: WebSocket;
+
+  private reqConfig: AxiosRequestConfig;
+  private logger?: ILogger;
 
   /**
    * Create an http client to interact with a fossilizer.
@@ -38,14 +41,21 @@ export class FossilizerHttpClient implements IFossilizerClient {
    * to be notified when your data has been successfully fossilized.
    * @param url of the fossilizer API.
    * @param eventHandler (optional) event handler for fossilizer notifications.
+   * @param logger (optional) logger for internal events. If you don't set a
+   * logger events will be dropped.
    */
-  constructor(url: string, eventHandler?: (e: FossilizedEvent) => void) {
+  constructor(
+    url: string,
+    eventHandler?: (e: FossilizedEvent) => void,
+    logger?: ILogger
+  ) {
     if (url.endsWith('/')) {
       this.fossilizerUrl = url.substring(0, url.length - 1);
     } else {
       this.fossilizerUrl = url;
     }
 
+    this.logger = logger;
     this.reqConfig = {
       timeout: 10000,
       // We want to handle http errors ourselves.
@@ -55,20 +65,48 @@ export class FossilizerHttpClient implements IFossilizerClient {
     if (eventHandler) {
       this.socket = new WebSocket(this.fossilizerUrl + '/websocket');
       this.socket.on('open', () => {
+        if (this.logger) {
+          this.logger.info({
+            component: 'fossilizerClient',
+            name: 'socketOpen'
+          });
+        }
+
         (this.socket as WebSocket).on('message', (jsonPayload: string) => {
+          if (this.logger) {
+            this.logger.info({
+              component: 'fossilizerClient',
+              message: jsonPayload,
+              name: 'socketMessage'
+            });
+          }
+
           try {
             const message = JSON.parse(jsonPayload);
             if (message.type === DID_FOSSILIZE_LINK_EVENT) {
               const event = new FossilizedEvent(message.data);
               eventHandler(event);
             }
-          } catch {
-            // We currently ignore event errors.
-            // We will log them once we have a logging infrastructure.
+          } catch (err) {
+            if (this.logger) {
+              this.logger.error(err);
+            }
           }
         });
       });
     }
+  }
+
+  /**
+   * Set the request timeout value.
+   * @param timeoutMS timeout in milliseconds.
+   */
+  public setRequestTimeout(timeoutMS: number) {
+    if (timeoutMS <= 0) {
+      throw new Error('Timeout should be a strictly positive value');
+    }
+
+    this.reqConfig.timeout = timeoutMS;
   }
 
   public async info(): Promise<any> {

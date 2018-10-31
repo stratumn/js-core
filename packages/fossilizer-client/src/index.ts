@@ -15,5 +15,6 @@
 */
 
 export { IFossilizerClient } from './client';
+export { ILogger } from './logger';
 export { FossilizedEvent } from './events';
 export { FossilizerHttpClient } from './httpClient';

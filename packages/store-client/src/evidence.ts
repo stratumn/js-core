@@ -14,9 +14,19 @@
   limitations under the License.
 */
 
-export { IStoreClient } from './client';
-export { Pagination } from './pagination';
-export { Segments } from './segments';
-export { SegmentsFilter } from './segmentsFilter';
-export { SAVED_EVIDENCES_EVENT, SAVED_LINKS_EVENT, StoreEvent } from './events';
-export { StoreHttpClient } from './httpClient';
+import { Evidence } from '@stratumn/js-chainscript';
+
+/**
+ * An association between a link (via its hash) and an evidence.
+ */
+export class LinkEvidence {
+  // Hex-encoded link hash.
+  public linkHash: string;
+  // The link's new evidence.
+  public evidence: Evidence;
+
+  constructor(linkHash: string, evidence: Evidence) {
+    this.linkHash = linkHash;
+    this.evidence = evidence;
+  }
+}

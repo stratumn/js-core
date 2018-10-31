@@ -14,6 +14,7 @@
   limitations under the License.
 */
 
+export { ILogger } from './logger';
 export { IStoreClient } from './client';
 export { Pagination } from './pagination';
 export { Segments } from './segments';

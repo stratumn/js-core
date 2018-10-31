@@ -28,7 +28,7 @@ import { DID_FOSSILIZE_LINK_EVENT, FossilizedEvent } from './events';
 export class FossilizerHttpClient implements IFossilizerClient {
   private fossilizerUrl: string;
   private reqConfig: AxiosRequestConfig;
-  private socket: WebSocket | null;
+  private socket?: WebSocket;
 
   /**
    * Create an http client to interact with a fossilizer.
@@ -51,8 +51,6 @@ export class FossilizerHttpClient implements IFossilizerClient {
       // We want to handle http errors ourselves.
       validateStatus: undefined
     };
-
-    this.socket = null;
 
     if (eventHandler) {
       this.socket = new WebSocket(this.fossilizerUrl + '/websocket');

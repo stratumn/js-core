@@ -37,7 +37,7 @@ import { SegmentsFilter } from './segmentsFilter';
 export class StoreHttpClient implements IStoreClient {
   private storeUrl: string;
   private reqConfig: AxiosRequestConfig;
-  private socket: WebSocket | null;
+  private socket?: WebSocket;
 
   /**
    * Create an http client to interact with a Chainscript Store.
@@ -60,8 +60,6 @@ export class StoreHttpClient implements IStoreClient {
       // We want to handle http errors ourselves.
       validateStatus: undefined
     };
-
-    this.socket = null;
 
     if (eventHandler) {
       this.socket = new WebSocket(this.storeUrl + '/websocket');

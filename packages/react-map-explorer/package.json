@@ -1,0 +1,48 @@
+{
+  "name": "@stratumn/react-map-explorer",
+  "version": "0.1.0",
+  "description": "A React component to load and display Chainscript process maps.",
+  "keywords": [
+    "stratumn",
+    "chainscript",
+    "react",
+    "UI"
+  ],
+  "author": "Stratumn Team",
+  "homepage": "https://github.com/stratumn/js-core#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stratumn/js-core.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/stratumn/js-core/issues"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "tslint --project \"./tsconfig.json\"",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "@types/jest": "23.3.9",
+    "@types/node": "10.12.2",
+    "@types/react": "16.4.18",
+    "@types/react-dom": "16.0.9",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
+    "react-scripts": "2.1.1",
+    "typescript": "3.1.6"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

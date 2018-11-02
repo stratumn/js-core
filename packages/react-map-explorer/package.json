@@ -30,6 +30,7 @@
     "tsc": "tsc"
   },
   "dependencies": {
+    "@stratumn/js-chainscript": "^1.0.2",
     "@stratumn/store-client": "^0.1.0",
     "react": "^16.6.0",
     "react-dom": "^16.6.0"

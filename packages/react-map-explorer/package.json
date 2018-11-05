@@ -24,10 +24,16 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage",
     "eject": "react-scripts eject",
     "lint": "tslint --project \"./tsconfig.json\"",
     "tsc": "tsc"
+  },
+  "jest": {
+    "coverageReporters": [
+      "text",
+      "html"
+    ]
   },
   "dependencies": {
     "@stratumn/js-chainscript": "^1.0.2",

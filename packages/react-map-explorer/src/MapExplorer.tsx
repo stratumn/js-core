@@ -14,7 +14,7 @@ export interface Props {
  * The MapExplorer component manages its own state.
  */
 // tslint:disable-next-line:interface-name
-interface State {
+export interface State {
   error?: Error;
   isLoaded: boolean;
   info?: any;
@@ -32,12 +32,18 @@ export class MapExplorer extends Component<Props, State> {
   }
 
   public async componentDidMount() {
-    // TODO: wrap in try/catch
-    const info = await this.props.storeClient.info();
-    this.setState({
-      info,
-      isLoaded: true
-    });
+    try {
+      const info = await this.props.storeClient.info();
+      this.setState({
+        info,
+        isLoaded: true
+      });
+    } catch (err) {
+      this.setState({
+        error: err,
+        isLoaded: true
+      });
+    }
   }
 
   public render() {
@@ -51,10 +57,19 @@ export class MapExplorer extends Component<Props, State> {
       );
     }
 
+    if (this.state.error) {
+      return (
+        <div>
+          <h1>{mapId}</h1>
+          <p>{this.state.error.message}</p>
+        </div>
+      );
+    }
+
     return (
       <div>
         <h1>{mapId}</h1>
-        <p>{JSON.stringify(this.state.info)}</p>
+        <p>{this.state.info.name}</p>
       </div>
     );
   }

@@ -14,16 +14,18 @@
   limitations under the License.
 */
 
-import { IStoreClient } from '@stratumn/store-client';
+import { Segment } from '@stratumn/js-chainscript';
 import React, { Component } from 'react';
+import { IMapLoader } from './mapLoader';
 
 /**
  * Props expected by the MapExplorer component.
  */
 // tslint:disable-next-line:interface-name
 export interface Props {
+  process: string;
   mapId: string;
-  storeClient: IStoreClient;
+  mapLoader: IMapLoader;
 }
 
 /**
@@ -33,7 +35,7 @@ export interface Props {
 export interface State {
   error?: Error;
   isLoaded: boolean;
-  info?: any;
+  segments?: Segment[];
 }
 
 /**
@@ -49,10 +51,13 @@ export class MapExplorer extends Component<Props, State> {
 
   public async componentDidMount() {
     try {
-      const info = await this.props.storeClient.info();
+      const segments = await this.props.mapLoader.load(
+        this.props.process,
+        this.props.mapId
+      );
       this.setState({
-        info,
-        isLoaded: true
+        isLoaded: true,
+        segments
       });
     } catch (err) {
       this.setState({
@@ -85,7 +90,7 @@ export class MapExplorer extends Component<Props, State> {
     return (
       <div>
         <h1>{mapId}</h1>
-        <p>{this.state.info.name}</p>
+        <p>{(this.state.segments as Segment[]).length} segments found</p>
       </div>
     );
   }

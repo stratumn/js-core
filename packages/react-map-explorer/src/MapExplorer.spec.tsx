@@ -14,74 +14,71 @@
   limitations under the License.
 */
 
-import { StoreHttpClient } from '@stratumn/store-client';
 import { shallow } from 'enzyme';
 import React from 'react';
-import { mocked } from 'ts-jest/utils';
+import { MapWithoutRefs, TestMapId, TestProcess } from '../test/fixtures/maps';
 import { MapExplorer, State } from './MapExplorer';
 
-jest.mock('@stratumn/store-client');
-
 describe('map explorer', () => {
-  const mockGetInfo = jest.fn();
-  const mockStore = mocked(StoreHttpClient);
+  const mapLoader = {
+    load: jest.fn()
+  };
+  const testProps = {
+    mapId: TestMapId,
+    mapLoader,
+    process: TestProcess
+  };
 
   beforeEach(() => {
-    mockStore.mockClear();
-    mockGetInfo.mockClear();
-    mockStore.mockImplementation(() => ({
-      info: mockGetInfo
-    }));
+    mapLoader.load.mockClear();
   });
 
-  it('renders a loading placeholder', () => {
-    const wrapper = shallow(
-      <MapExplorer mapId={'123'} storeClient={new StoreHttpClient('')} />
+  it('renders a loading spinner', () => {
+    const wrapper = shallow(<MapExplorer {...testProps} />);
+
+    expect(wrapper.html()).toEqual(
+      '<div><h1>test_map</h1><p>Loading...</p></div>'
     );
-
-    expect(wrapper.html()).toEqual('<div><h1>123</h1><p>Loading...</p></div>');
   });
 
-  it('renders error', () => {
-    mockGetInfo.mockImplementation(() => {
+  it('renders an error', () => {
+    mapLoader.load.mockImplementationOnce(() => {
       throw new Error('Network Failure');
     });
 
-    const wrapper = shallow(
-      <MapExplorer mapId={'456'} storeClient={new StoreHttpClient('')} />
-    );
+    const wrapper = shallow(<MapExplorer {...testProps} />);
 
-    expect(mockGetInfo).toHaveBeenCalled();
+    expect(mapLoader.load).toHaveBeenCalled();
     expect(wrapper.html()).toEqual(
-      '<div><h1>456</h1><p>Network Failure</p></div>'
+      '<div><h1>test_map</h1><p>Network Failure</p></div>'
     );
   });
 
-  it('calls the store API', () => {
-    shallow(
-      <MapExplorer mapId={'456'} storeClient={new StoreHttpClient('')} />
-    );
+  it('loads the map segments', () => {
+    shallow(<MapExplorer {...testProps} />);
 
-    expect(mockGetInfo).toHaveBeenCalled();
+    expect(mapLoader.load).toHaveBeenCalled();
+    expect(mapLoader.load).toHaveBeenCalledWith(
+      testProps.process,
+      testProps.mapId
+    );
   });
 
-  it('renders store information', () => {
-    mockGetInfo.mockImplementation(() => {
-      return { name: 'Amazing Store' };
+  it('renders map segments count', () => {
+    mapLoader.load.mockImplementation(async () => {
+      return MapWithoutRefs;
     });
 
-    const wrapper = shallow(
-      <MapExplorer mapId={'456'} storeClient={new StoreHttpClient('')} />
-    );
+    const wrapper = shallow(<MapExplorer {...testProps} />);
 
     const loadedState: State = {
-      info: { name: 'Amazing Store' },
-      isLoaded: true
+      isLoaded: true,
+      segments: MapWithoutRefs
     };
     wrapper.setState(loadedState);
 
     expect(wrapper.html()).toEqual(
-      '<div><h1>456</h1><p>Amazing Store</p></div>'
+      '<div><h1>test_map</h1><p>2 segments found</p></div>'
     );
   });
 });

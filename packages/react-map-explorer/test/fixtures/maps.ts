@@ -14,21 +14,21 @@
   limitations under the License.
 */
 
-import { StoreHttpClient } from '@stratumn/store-client';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import { MapExplorer } from './MapExplorer';
-import { StoreMapLoader } from './mapLoader';
+import { LinkBuilder } from '@stratumn/js-chainscript';
 
-const storeClient = new StoreHttpClient('http://localhost:5000');
-const mapLoader = new StoreMapLoader(storeClient);
+const TestProcess = 'test_process';
+const TestMapId = 'test_map';
 
-ReactDOM.render(
-  <MapExplorer
-    process={'test_process'}
-    mapId={'test_map'}
-    mapLoader={mapLoader}
-  />,
-  document.getElementById('root')
-);
+const s1 = new LinkBuilder(TestProcess, TestMapId)
+  .withStep('init')
+  .build()
+  .segmentify();
+const s2 = new LinkBuilder(TestProcess, TestMapId)
+  .withParent(s1.linkHash())
+  .withStep('process')
+  .build()
+  .segmentify();
+
+const MapWithoutRefs = [s1, s2];
+
+export { MapWithoutRefs, TestMapId, TestProcess };

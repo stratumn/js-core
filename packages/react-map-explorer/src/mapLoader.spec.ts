@@ -21,10 +21,10 @@ import { StoreMapLoader } from './mapLoader';
 describe('store map loader', () => {
   it('finds segments with the right process and mapId', async () => {
     const mockStore = jest.fn<IStoreClient>(() => ({
-      findSegments: () => ({
+      findSegments: jest.fn(() => ({
         segments: MapWithoutRefs,
         totalCount: 5
-      })
+      }))
     }));
 
     const mock = new mockStore();

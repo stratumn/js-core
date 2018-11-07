@@ -31,7 +31,9 @@
   "scripts": {
     "clean": "rm -r ./lib",
     "lint": "tslint --project \"./tsconfig.json\"",
+    "prepare": "npm run clean && npm run tsc",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "tsc": "tsc"
   },
   "bugs": {
@@ -39,7 +41,6 @@
   },
   "jest": {
     "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
     "moduleFileExtensions": [
       "ts",
       "js"

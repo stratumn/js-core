@@ -11,6 +11,14 @@
   "author": "Stratumn Team",
   "homepage": "https://github.com/stratumn/js-core#readme",
   "license": "Apache-2.0",
+  "main": "lib/main.js",
+  "typings": "lib/main.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stratumn/js-core.git"
@@ -22,12 +30,13 @@
     "url": "https://github.com/stratumn/js-core/issues"
   },
   "scripts": {
+    "clean": "rm -r ./lib",
+    "lint": "tslint --project \"./tsconfig.build.json\"",
+    "prepare": "npm run clean && npm run tsc",
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --coverage",
-    "eject": "react-scripts eject",
-    "lint": "tslint --project \"./tsconfig.json\"",
-    "tsc": "tsc"
+    "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage",
+    "tsc": "tsc --build \"./tsconfig.build.json\""
   },
   "jest": {
     "coverageReporters": [

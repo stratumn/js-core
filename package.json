@@ -16,6 +16,7 @@
     "lint": "tslint --project \"./tsconfig.json\"",
     "publish:npm": "yarn lint && yarn tsc && lerna publish",
     "test": "lerna run --parallel test",
+    "test:coverage": "lerna run --parallel test:coverage",
     "tsc": "lerna run tsc",
     "update-license-headers": "./update-license-headers.sh"
   }

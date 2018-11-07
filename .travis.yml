@@ -9,5 +9,5 @@ before_script:
 script:
   - yarn tsc
   - yarn lint
-  - yarn test
+  - yarn test:coverage
   - codecov

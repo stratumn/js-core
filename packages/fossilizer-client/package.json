@@ -31,7 +31,7 @@
   "scripts": {
     "clean": "rm -rf ./lib",
     "lint": "tslint --project \"./tsconfig.json\"",
-    "prepublishOnly": "npm run clean && npm run tsc",
+    "prepublishOnly": "yarn clean && yarn tsc",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "tsc": "tsc"

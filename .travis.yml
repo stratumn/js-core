@@ -5,6 +5,7 @@ node_js:
   - 10
 before_script:
   - yarn global add codecov
+  - yarn --frozen-lockfile
   - lerna bootstrap
 script:
   - yarn tsc

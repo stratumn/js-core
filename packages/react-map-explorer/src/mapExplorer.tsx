@@ -42,12 +42,7 @@ export interface State {
  * A component to load and display Chainscript process maps.
  */
 export class MapExplorer extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isLoaded: false
-    };
-  }
+  public state: State = { isLoaded: false };
 
   public async componentDidMount() {
     try {

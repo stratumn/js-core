@@ -41,7 +41,7 @@
   "jest": {
     "coverageReporters": [
       "text",
-      "html"
+      "lcov"
     ]
   },
   "dependencies": {

@@ -15,7 +15,12 @@
 */
 
 import { Segment } from '@stratumn/js-chainscript';
-import { IStoreClient, SegmentsFilter } from '@stratumn/store-client';
+import {
+  IStoreClient,
+  Pagination,
+  SegmentsFilter
+} from '@stratumn/store-client';
+import { Buffer } from 'buffer';
 
 /**
  * Map loader loads all segments from a given map in a format suitable for
@@ -40,10 +45,42 @@ export class StoreMapLoader implements IMapLoader {
   }
 
   public async load(process: string, mapId: string): Promise<Segment[]> {
-    // TODO: recursively load the whole map (pagination)
-    // TODO: load references
+    const results: Segment[] = [];
     const filters = new SegmentsFilter(process).withMapIDs(mapId);
-    const s = await this.store.findSegments(filters);
-    return s.segments;
+
+    let response = await this.store.findSegments(
+      filters,
+      new Pagination(0, 25)
+    );
+
+    const mapLen = response.totalCount;
+    results.push(...response.segments);
+
+    // Recursively fetch the whole map.
+    while (results.length < mapLen) {
+      response = await this.store.findSegments(
+        filters,
+        new Pagination(results.length, 25)
+      );
+
+      results.push(...response.segments);
+    }
+
+    // Then we fetch all references.
+    const refs: Segment[] = [];
+    for (const mapSegment of results) {
+      for (const ref of mapSegment.link().refs()) {
+        const refSegment = await this.store.getSegment(
+          Buffer.from(ref.linkHash).toString('hex')
+        );
+        if (refSegment) {
+          refs.push(refSegment);
+        }
+      }
+    }
+
+    results.push(...refs);
+
+    return results;
   }
 }

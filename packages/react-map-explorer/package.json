@@ -1,0 +1,70 @@
+{
+  "name": "@stratumn/react-map-explorer",
+  "version": "0.1.0",
+  "description": "A React component to load and display Chainscript process maps.",
+  "keywords": [
+    "stratumn",
+    "chainscript",
+    "react",
+    "UI"
+  ],
+  "author": "Stratumn Team",
+  "homepage": "https://github.com/stratumn/js-core#readme",
+  "license": "Apache-2.0",
+  "main": "lib/main.js",
+  "typings": "lib/main.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stratumn/js-core.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/stratumn/js-core/issues"
+  },
+  "scripts": {
+    "clean": "rm -rf ./lib",
+    "lint": "tslint --project \"./tsconfig.build.json\"",
+    "prepublishOnly": "yarn clean && yarn tsc",
+    "start": "react-scripts start",
+    "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage",
+    "tsc": "tsc --build \"./tsconfig.build.json\""
+  },
+  "jest": {
+    "coverageReporters": [
+      "text",
+      "html"
+    ]
+  },
+  "dependencies": {
+    "@stratumn/js-chainscript": "^1.0.2",
+    "@stratumn/store-client": "^0.1.0",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0"
+  },
+  "devDependencies": {
+    "@types/enzyme": "^3.1.14",
+    "@types/enzyme-adapter-react-16": "^1.0.3",
+    "@types/jest": "23.3.9",
+    "@types/node": "10.12.2",
+    "@types/react": "16.4.18",
+    "@types/react-dom": "16.0.9",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.6.0",
+    "react-scripts": "2.1.1"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

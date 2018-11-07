@@ -29,7 +29,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "rm -r ./lib",
+    "clean": "rm -rf ./lib",
     "lint": "tslint --project \"./tsconfig.json\"",
     "prepare": "npm run clean && npm run tsc",
     "test": "jest",

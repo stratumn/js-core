@@ -30,7 +30,7 @@
     "url": "https://github.com/stratumn/js-core/issues"
   },
   "scripts": {
-    "clean": "rm -r ./lib",
+    "clean": "rm -rf ./lib",
     "lint": "tslint --project \"./tsconfig.build.json\"",
     "prepare": "npm run clean && npm run tsc",
     "start": "react-scripts start",

@@ -18,7 +18,7 @@ import { StoreHttpClient } from '@stratumn/store-client';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { MapExplorer } from './MapExplorer';
+import { MapExplorer } from './mapExplorer';
 import { StoreMapLoader } from './mapLoader';
 
 const storeClient = new StoreHttpClient('http://localhost:5000');

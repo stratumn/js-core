@@ -17,7 +17,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 import { MapWithoutRefs, TestMapId, TestProcess } from '../test/fixtures/maps';
-import { MapExplorer, State } from './MapExplorer';
+import { MapExplorer, State } from './mapExplorer';
 
 describe('map explorer', () => {
   const mapLoader = {

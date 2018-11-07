@@ -29,9 +29,11 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "rm -r ./lib",
+    "clean": "rm -rf ./lib",
     "lint": "tslint --project \"./tsconfig.json\"",
+    "prepublishOnly": "yarn clean && yarn tsc",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "tsc": "tsc"
   },
   "bugs": {
@@ -39,7 +41,6 @@
   },
   "jest": {
     "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
     "moduleFileExtensions": [
       "ts",
       "js"

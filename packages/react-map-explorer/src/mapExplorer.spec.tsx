@@ -42,11 +42,14 @@ describe('map explorer', () => {
   });
 
   it('renders an error', () => {
-    mapLoader.load.mockImplementationOnce(() => {
-      throw new Error('Network Failure');
-    });
-
+    mapLoader.load.mockRejectedValueOnce(new Error('Network Failure'));
     const wrapper = shallow(<MapExplorer {...testProps} />);
+
+    const failedState: State = {
+      error: new Error('Network Failure'),
+      isLoaded: true
+    };
+    wrapper.setState(failedState);
 
     expect(mapLoader.load).toHaveBeenCalled();
     expect(wrapper.html()).toEqual(
@@ -65,10 +68,7 @@ describe('map explorer', () => {
   });
 
   it('renders map segments count', () => {
-    mapLoader.load.mockImplementation(async () => {
-      return MapWithoutRefs;
-    });
-
+    mapLoader.load.mockReturnValueOnce(MapWithoutRefs);
     const wrapper = shallow(<MapExplorer {...testProps} />);
 
     const loadedState: State = {

@@ -22,6 +22,12 @@ To install dependencies, simply run:
 yarn
 ```
 
+To link packages locally, run:
+
+```bash
+lerna bootstrap
+```
+
 To build libraries, run:
 
 ```bash

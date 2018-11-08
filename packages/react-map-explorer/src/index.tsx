@@ -17,7 +17,6 @@
 import { StoreHttpClient } from '@stratumn/store-client';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import { MapExplorer } from './mapExplorer';
 import { StoreMapLoader } from './mapLoader';
 

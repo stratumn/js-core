@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import { LinkBuilder } from '@stratumn/js-chainscript';
+import { LinkBuilder, LinkReference } from '@stratumn/js-chainscript';
 
 const TestProcess = 'test_process';
 const TestMapId = 'test_map';
@@ -31,4 +31,16 @@ const s2 = new LinkBuilder(TestProcess, TestMapId)
 
 const MapWithoutRefs = [s1, s2];
 
-export { MapWithoutRefs, TestMapId, TestProcess };
+const RefProcess = 'ref_process';
+const RefMapId = 'ref_map';
+
+const Ref = new LinkBuilder(RefProcess, RefMapId).build().segmentify();
+const s3 = new LinkBuilder(TestProcess, TestMapId)
+  .withParent(s1.linkHash())
+  .withRefs([new LinkReference(Ref.linkHash(), RefProcess)])
+  .build()
+  .segmentify();
+
+const MapWithRefs = [s1, s2, s3];
+
+export { MapWithoutRefs, MapWithRefs, Ref, TestMapId, TestProcess };

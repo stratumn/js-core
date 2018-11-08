@@ -36,9 +36,12 @@ describe('map explorer', () => {
   it('renders a loading spinner', () => {
     const wrapper = shallow(<MapExplorer {...testProps} />);
 
-    expect(wrapper.html()).toEqual(
-      '<div><h1>test_map</h1><p>Loading...</p></div>'
-    );
+    expect(
+      wrapper
+        .find('p')
+        .first()
+        .text()
+    ).toEqual('Loading...');
   });
 
   it('renders an error', () => {
@@ -52,9 +55,12 @@ describe('map explorer', () => {
     wrapper.setState(failedState);
 
     expect(mapLoader.load).toHaveBeenCalled();
-    expect(wrapper.html()).toEqual(
-      '<div><h1>test_map</h1><p>Network Failure</p></div>'
-    );
+    expect(
+      wrapper
+        .find('p')
+        .first()
+        .text()
+    ).toEqual('Network Failure');
   });
 
   it('loads the map segments', () => {
@@ -77,8 +83,34 @@ describe('map explorer', () => {
     };
     wrapper.setState(loadedState);
 
-    expect(wrapper.html()).toEqual(
-      '<div><h1>test_map</h1><p>2 segments found</p></div>'
+    expect(
+      wrapper
+        .find('h2')
+        .first()
+        .text()
+    ).toEqual('2 segments found');
+  });
+
+  it('renders a list of segments', () => {
+    const segmentSelected = jest.fn();
+    mapLoader.load.mockReturnValueOnce(MapWithoutRefs);
+    const wrapper = shallow(
+      <MapExplorer {...testProps} onSegmentSelected={segmentSelected} />
     );
+
+    const loadedState: State = {
+      isLoaded: true,
+      segments: MapWithoutRefs
+    };
+    wrapper.setState(loadedState);
+
+    expect(wrapper.find('ul').children()).toHaveLength(2);
+
+    wrapper
+      .find('li')
+      .first()
+      .simulate('click');
+    expect(segmentSelected).toHaveBeenCalled();
+    expect(segmentSelected).toHaveBeenCalledWith(MapWithoutRefs[0]);
   });
 });

@@ -17,6 +17,7 @@
 import { Segment } from '@stratumn/js-chainscript';
 import React, { Component } from 'react';
 import { IMapLoader } from './mapLoader';
+import { MapSegment } from './segment';
 
 /**
  * Props expected by the MapExplorer component.
@@ -26,6 +27,7 @@ export interface Props {
   process: string;
   mapId: string;
   mapLoader: IMapLoader;
+  onSegmentSelected?: (s: Segment) => void;
 }
 
 /**
@@ -82,10 +84,25 @@ export class MapExplorer extends Component<Props, State> {
       );
     }
 
+    const segments = this.state.segments as Segment[];
+    const segmentItems = segments.map((s: Segment) => (
+      <li
+        key={Buffer.from(s.linkHash()).toString('hex')}
+        onClick={() => {
+          if (this.props.onSegmentSelected) {
+            this.props.onSegmentSelected(s);
+          }
+        }}
+      >
+        <MapSegment segment={s} />
+      </li>
+    ));
+
     return (
       <div>
         <h1>{mapId}</h1>
-        <p>{(this.state.segments as Segment[]).length} segments found</p>
+        <h2>{(this.state.segments as Segment[]).length} segments found</h2>
+        <ul>{segmentItems}</ul>
       </div>
     );
   }

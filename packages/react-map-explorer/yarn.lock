@@ -868,6 +868,23 @@
     js-base64 "^2.4.9"
     protobufjs "^6.8.8"
 
+"@stratumn/js-chainscript@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.3.tgz#74bbee2fd6b3bda68ea2a02afd4cba5036097b85"
+  integrity sha512-+HA3CHUCzNC843Gg0y8oO6YcDe2QwfBaztB9nw5ToCPjw88NhXdws/t56Y+GX5Ue2073CjfkgikShvMEKQWHKg==
+  dependencies:
+    "@stratumn/canonicaljson" "^1.0.2"
+    "@stratumn/js-crypto" "0.1.0"
+    "@types/base64-js" "^1.2.5"
+    "@types/jmespath" "^0.15.0"
+    "@types/js-base64" "^2.3.1"
+    base64-js "^1.3.0"
+    buffer "^5.2.1"
+    fast-sha256 "^1.1.0"
+    jmespath "^0.15.0"
+    js-base64 "^2.4.9"
+    protobufjs "^6.8.8"
+
 "@stratumn/js-crypto@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@stratumn/js-crypto/-/js-crypto-0.1.0.tgz#6e6e7188893728f408cf9bb43519831e7fa5aef8"

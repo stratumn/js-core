@@ -78,10 +78,10 @@
   dependencies:
     bignumber.js "^4.1.0"
 
-"@stratumn/js-chainscript@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.2.tgz#f59bacf4a699a88ea7d88365cbbd2b63f63cea9e"
-  integrity sha512-hSvBihZDKVAnXxzR+csleGnF0usoyO60zNJ/K/3t9qmjN799fPRPc9gc6sEaEQPQtVNv1vXijTESRlJYpUvOaA==
+"@stratumn/js-chainscript@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.3.tgz#74bbee2fd6b3bda68ea2a02afd4cba5036097b85"
+  integrity sha512-+HA3CHUCzNC843Gg0y8oO6YcDe2QwfBaztB9nw5ToCPjw88NhXdws/t56Y+GX5Ue2073CjfkgikShvMEKQWHKg==
   dependencies:
     "@stratumn/canonicaljson" "^1.0.2"
     "@stratumn/js-crypto" "0.1.0"
@@ -89,6 +89,7 @@
     "@types/jmespath" "^0.15.0"
     "@types/js-base64" "^2.3.1"
     base64-js "^1.3.0"
+    buffer "^5.2.1"
     fast-sha256 "^1.1.0"
     jmespath "^0.15.0"
     js-base64 "^2.4.9"
@@ -529,7 +530,7 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-base64-js@^1.3.0:
+base64-js@^1.0.2, base64-js@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.0.tgz#cab1e6118f051095e58b5281aea8c1cd22bfc0e3"
   integrity sha512-ccav/yGvoa80BQDljCxsmmQ3Xvx60/UpBIij5QN21W3wBi/hhIC9OoO+KLpu9IJTS9j4DRVJ3aDDF9cMSoa2lw==
@@ -615,6 +616,14 @@ buffer-from@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.1.tgz#32713bc028f75c02fdb710d7c7bcec1f2c6070ef"
   integrity sha512-MQcXEUbCKtEo7bhqEs6560Hyd4XaovZlO/k9V3hjVUF/zwW7KBVdSK4gIt/bzwS9MbR5qob+F5jusZsb0YQK2A==
+
+buffer@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.2.1.tgz#dd57fa0f109ac59c602479044dca7b8b3d0b71d6"
+  integrity sha512-c+Ko0loDaFfuPWiL02ls9Xd3GO3cPVmUobQ6t3rXNUk304u6hGq+8N/kFi+QEIKhzK3uwolVhLzszmfLmMLnqg==
+  dependencies:
+    base64-js "^1.0.2"
+    ieee754 "^1.1.4"
 
 builtin-modules@^1.0.0:
   version "1.1.1"
@@ -1469,6 +1478,11 @@ iconv-lite@0.4.24, iconv-lite@^0.4.4:
   integrity sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
+
+ieee754@^1.1.4:
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.12.tgz#50bf24e5b9c8bb98af4964c941cdb0918da7b60b"
+  integrity sha512-GguP+DRY+pJ3soyIiGPTvdiVXjZ+DbXOxGpXn3eMvNW4x4irjqXm4wHKscC+TfxSJ0yw/S1F24tqdMNsMZTiLA==
 
 ignore-walk@^3.0.1:
   version "3.0.1"

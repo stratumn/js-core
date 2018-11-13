@@ -234,6 +234,19 @@ describe('fossilizer http client', () => {
       expect(err).toEqual(new Error('HTTP 400: Bad Request'));
     });
 
+    it('throws server error if provided', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        data: { error: { message: 'Missing data' } },
+        status: 400,
+        statusText: 'Bad Request'
+      });
+
+      const [err] = await to(client.fossilize('', 'missing data'));
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual({ message: 'Missing data' });
+    });
+
     it('fossilizes data', async () => {
       axiosMock = jest.spyOn(axios, 'post');
       axiosMock.mockResolvedValue({

@@ -223,7 +223,7 @@ export class StoreHttpClient implements IStoreClient {
         this.logger.error(response);
       }
 
-      if (response.data.error) {
+      if (response.data && response.data.error) {
         throw response.data.error;
       }
 

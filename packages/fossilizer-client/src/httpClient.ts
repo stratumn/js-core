@@ -136,6 +136,14 @@ export class FossilizerHttpClient implements IFossilizerClient {
    */
   private handleHttpErr(response: any) {
     if (response.status !== 200) {
+      if (this.logger) {
+        this.logger.error(response);
+      }
+
+      if (response.data.error) {
+        throw response.data.error;
+      }
+
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
   }

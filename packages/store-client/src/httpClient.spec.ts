@@ -164,6 +164,19 @@ describe('store http client', () => {
       expect(err).toEqual(new Error('HTTP 404: Not Found'));
     });
 
+    it('throws server error if provided', async () => {
+      axiosMock = jest.spyOn(axios, 'get');
+      axiosMock.mockResolvedValue({
+        data: { error: { message: 'Too bad' } },
+        status: 400,
+        statusText: 'Bad Request'
+      });
+
+      const [err] = await to(client.info());
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual({ message: 'Too bad' });
+    });
+
     it('returns store info', async () => {
       const info = {
         description: 'PostgreSQL Chainscript Storage',

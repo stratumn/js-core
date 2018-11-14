@@ -17,7 +17,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 import { MapWithoutRefs, TestMapId, TestProcess } from '../test/fixtures/maps';
-import { MapExplorer, State } from './mapExplorer';
+import { MapExplorer } from './mapExplorer';
 
 describe('map explorer', () => {
   const mapLoader = {
@@ -44,15 +44,12 @@ describe('map explorer', () => {
     ).toEqual('Loading...');
   });
 
-  it('renders an error', () => {
+  it('renders an error', async () => {
     mapLoader.load.mockRejectedValueOnce(new Error('Network Failure'));
     const wrapper = shallow(<MapExplorer {...testProps} />);
 
-    const failedState: State = {
-      error: new Error('Network Failure'),
-      isLoaded: true
-    };
-    wrapper.setState(failedState);
+    await new Promise(resolve => setImmediate(resolve));
+    wrapper.update();
 
     expect(mapLoader.load).toHaveBeenCalled();
     expect(
@@ -73,15 +70,12 @@ describe('map explorer', () => {
     );
   });
 
-  it('renders map segments count', () => {
-    mapLoader.load.mockReturnValueOnce(MapWithoutRefs);
+  it('renders map segments count', async () => {
+    mapLoader.load.mockResolvedValueOnce(MapWithoutRefs);
     const wrapper = shallow(<MapExplorer {...testProps} />);
 
-    const loadedState: State = {
-      isLoaded: true,
-      segments: MapWithoutRefs
-    };
-    wrapper.setState(loadedState);
+    await new Promise(resolve => setImmediate(resolve));
+    wrapper.update();
 
     expect(
       wrapper
@@ -91,18 +85,15 @@ describe('map explorer', () => {
     ).toEqual('2 segments found');
   });
 
-  it('renders a list of segments', () => {
+  it('renders a list of segments', async () => {
     const segmentSelected = jest.fn();
-    mapLoader.load.mockReturnValueOnce(MapWithoutRefs);
+    mapLoader.load.mockResolvedValueOnce(MapWithoutRefs);
     const wrapper = shallow(
       <MapExplorer {...testProps} onSegmentSelected={segmentSelected} />
     );
 
-    const loadedState: State = {
-      isLoaded: true,
-      segments: MapWithoutRefs
-    };
-    wrapper.setState(loadedState);
+    await new Promise(resolve => setImmediate(resolve));
+    wrapper.update();
 
     expect(wrapper.find('ul').children()).toHaveLength(2);
 
@@ -112,5 +103,35 @@ describe('map explorer', () => {
       .simulate('click');
     expect(segmentSelected).toHaveBeenCalled();
     expect(segmentSelected).toHaveBeenCalledWith(MapWithoutRefs[0]);
+  });
+
+  it('reloads when mapId changes', () => {
+    mapLoader.load.mockResolvedValue(MapWithoutRefs);
+    const wrapper = shallow(<MapExplorer {...testProps} />);
+    expect(mapLoader.load).toHaveBeenCalled();
+
+    wrapper.setProps({ mapId: 'other_map', process: 'other_process' });
+    expect(mapLoader.load).toHaveBeenCalledWith('other_process', 'other_map');
+  });
+
+  it('reloads when segments where not loaded', async () => {
+    mapLoader.load.mockResolvedValue([]);
+    const wrapper = shallow(<MapExplorer {...testProps} />);
+    expect(mapLoader.load).toHaveBeenCalledTimes(1);
+
+    wrapper.setProps({ includeHash: '1234' });
+    expect(mapLoader.load).toHaveBeenCalledTimes(2);
+  });
+
+  it('reloads when new segment should be included', async () => {
+    mapLoader.load.mockResolvedValue(MapWithoutRefs);
+    const wrapper = shallow(<MapExplorer {...testProps} />);
+    expect(mapLoader.load).toHaveBeenCalledTimes(1);
+
+    await new Promise(resolve => setImmediate(resolve));
+    wrapper.update();
+
+    wrapper.setProps({ includeHash: '1234' });
+    expect(mapLoader.load).toHaveBeenCalledTimes(2);
   });
 });

@@ -142,7 +142,7 @@ export class MapExplorer extends Component<Props, State> {
       }
 
       if (
-        !this.state.segments.find(
+        !this.state.segments.some(
           (s: Segment) =>
             Buffer.from(s.linkHash()).toString('hex') === this.props.includeHash
         )

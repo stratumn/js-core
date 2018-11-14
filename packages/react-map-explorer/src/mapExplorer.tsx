@@ -24,9 +24,33 @@ import { MapSegment } from './segment';
  */
 // tslint:disable-next-line:interface-name
 export interface Props {
+  /**
+   * Map process.
+   */
   process: string;
+
+  /**
+   * Id of the map you want to display.
+   */
   mapId: string;
+
+  /**
+   * Hash of a known link that should be in the map.
+   * If no link with this hash is currently loaded, the component will re-fetch
+   * the map from the server.
+   * You can use this prop to automatically refresh the map when creating new
+   * links.
+   */
+  includeHash?: string;
+
+  /**
+   * Object that actually loads the whole map.
+   */
   mapLoader: IMapLoader;
+
+  /**
+   * Callback when a segment is selected.
+   */
   onSegmentSelected?: (s: Segment) => void;
 }
 
@@ -47,20 +71,12 @@ export class MapExplorer extends Component<Props, State> {
   public state: State = { isLoaded: false };
 
   public async componentDidMount() {
-    try {
-      const segments = await this.props.mapLoader.load(
-        this.props.process,
-        this.props.mapId
-      );
-      this.setState({
-        isLoaded: true,
-        segments
-      });
-    } catch (err) {
-      this.setState({
-        error: err,
-        isLoaded: true
-      });
+    await this.loadMap();
+  }
+
+  public async componentDidUpdate(prevProps: Props) {
+    if (this.shouldReloadMap(prevProps)) {
+      await this.loadMap();
     }
   }
 
@@ -105,5 +121,54 @@ export class MapExplorer extends Component<Props, State> {
         <ul>{segmentItems}</ul>
       </div>
     );
+  }
+
+  private shouldReloadMap = (prevProps: Props): boolean => {
+    // If the map we want to display has changed, refresh.
+    if (
+      prevProps.process !== this.props.process ||
+      prevProps.mapId !== this.props.mapId
+    ) {
+      return true;
+    }
+
+    // If an unknown link should be included, refresh.
+    if (
+      this.props.includeHash &&
+      prevProps.includeHash !== this.props.includeHash
+    ) {
+      if (!this.state.segments) {
+        return true;
+      }
+
+      if (
+        !this.state.segments.find(
+          (s: Segment) =>
+            Buffer.from(s.linkHash()).toString('hex') === this.props.includeHash
+        )
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private loadMap = async () => {
+    try {
+      const segments = await this.props.mapLoader.load(
+        this.props.process,
+        this.props.mapId
+      );
+      this.setState({
+        isLoaded: true,
+        segments
+      });
+    } catch (err) {
+      this.setState({
+        error: err,
+        isLoaded: true
+      });
+    }
   }
 }

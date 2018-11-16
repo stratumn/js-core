@@ -75,7 +75,11 @@ export class MapExplorer extends Component<Props, State> {
   public async componentDidMount() {
     await this.loadMap();
     if (this.node && this.state.segments) {
-      displayMap(this.node, this.state.segments, this.props.onSegmentSelected);
+      displayMap(this.node, this.state.segments, {
+        mapId: this.props.mapId,
+        onSegmentSelected: this.props.onSegmentSelected,
+        process: this.props.process
+      });
     }
   }
 
@@ -83,11 +87,11 @@ export class MapExplorer extends Component<Props, State> {
     if (this.shouldReloadMap(prevProps)) {
       await this.loadMap();
       if (this.node && this.state.segments) {
-        displayMap(
-          this.node,
-          this.state.segments,
-          this.props.onSegmentSelected
-        );
+        displayMap(this.node, this.state.segments, {
+          mapId: this.props.mapId,
+          onSegmentSelected: this.props.onSegmentSelected,
+          process: this.props.process
+        });
       }
     }
   }

@@ -19,7 +19,6 @@ import {
   Pagination,
   SegmentsFilter
 } from '@stratumn/store-client';
-import { Buffer } from 'buffer';
 import {
   MapWithoutRefs,
   MapWithRefs,
@@ -27,6 +26,7 @@ import {
   TestMapId,
   TestProcess
 } from '../test/fixtures/maps';
+import { hashToString } from './hash';
 import { StoreMapLoader } from './mapLoader';
 
 describe('store map loader', () => {
@@ -97,9 +97,7 @@ describe('store map loader', () => {
     const seg = await loader.load(TestProcess, TestMapId);
 
     expect(mock.getSegment).toHaveBeenCalled();
-    expect(mock.getSegment).toHaveBeenCalledWith(
-      Buffer.from(Ref.linkHash()).toString('hex')
-    );
+    expect(mock.getSegment).toHaveBeenCalledWith(hashToString(Ref.linkHash()));
     expect(seg).toEqual([...MapWithRefs, Ref]);
   });
 });

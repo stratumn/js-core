@@ -41,31 +41,18 @@ describe('store http client', () => {
     if (axiosMock) {
       axiosMock.mockRestore();
     }
+
+    mockSocket.mockReset();
   });
 
   describe('ctor', () => {
-    // Mock the WebSocket.on() method to accept an 'open' call and return a
-    // custom websocket message once.
-    const mockSocketOn = (message: string) => (
-      event: string,
-      callback: any
-    ) => {
-      if (event === 'open') {
-        callback();
-      } else if (event === 'message') {
-        callback(message);
-      }
-    };
+    it('rejects invalid url', () => {
+      expect(() => new StoreHttpClient('localhost:8080')).toThrowError();
+    });
 
-    it('opens a websocket with the store', done => {
+    it('opens a websocket with the store', () => {
       mockSocket.mockImplementationOnce((url: string) => {
-        expect(url).toBe('http://localhost:5000/websocket');
-        return {
-          on: (event: string) => {
-            expect(event).toBe('open');
-            done();
-          }
-        };
+        expect(url).toBe('ws://localhost:5000/websocket');
       });
 
       const wsClient = new StoreHttpClient('http://localhost:5000/', () => {
@@ -78,10 +65,9 @@ describe('store http client', () => {
     });
 
     it('ignores malformed events', () => {
+      const socketInstance = new WebSocket('');
       mockSocket.mockImplementationOnce(() => {
-        return {
-          on: mockSocketOn('{ not valid JSON')
-        };
+        return socketInstance;
       });
 
       const wsClient = new StoreHttpClient('http://localhost:5000', () => {
@@ -90,14 +76,20 @@ describe('store http client', () => {
       });
 
       expect(wsClient).not.toBeNull();
-      expect(WebSocket).toHaveBeenCalled();
+      expect(WebSocket).toHaveBeenCalledTimes(2);
+
+      socketInstance.onopen({ target: socketInstance });
+      socketInstance.onmessage({
+        data: '{ malformed',
+        target: socketInstance,
+        type: 'message'
+      });
     });
 
     it('ignores unknown event types', () => {
+      const socketInstance = new WebSocket('');
       mockSocket.mockImplementationOnce(() => {
-        return {
-          on: mockSocketOn(JSON.stringify({ type: 'unknown' }))
-        };
+        return socketInstance;
       });
 
       const wsClient = new StoreHttpClient('http://localhost:5000', () => {
@@ -106,16 +98,20 @@ describe('store http client', () => {
       });
 
       expect(wsClient).not.toBeNull();
-      expect(WebSocket).toHaveBeenCalled();
+      expect(WebSocket).toHaveBeenCalledTimes(2);
+
+      socketInstance.onopen({ target: socketInstance });
+      socketInstance.onmessage({
+        data: `{ type: 'UNKNOWN_EVENT' }`,
+        target: socketInstance,
+        type: 'UNKNOWN_EVENT'
+      });
     });
 
-    it('receives store events', () => {
+    it('receives store events', done => {
+      const socketInstance = new WebSocket('');
       mockSocket.mockImplementationOnce(() => {
-        return {
-          on: mockSocketOn(
-            JSON.stringify({ type: 'SavedLinks', data: [SimpleLinkObject] })
-          )
-        };
+        return socketInstance;
       });
 
       const wsClient = new StoreHttpClient(
@@ -124,11 +120,19 @@ describe('store http client', () => {
           expect(e.type).toEqual('SavedLinks');
           expect(e.evidences).toEqual([]);
           expect(e.links).toEqual([SimpleLink]);
+          done();
         }
       );
 
       expect(wsClient).not.toBeNull();
       expect(WebSocket).toHaveBeenCalled();
+
+      socketInstance.onopen({ target: socketInstance });
+      socketInstance.onmessage({
+        data: JSON.stringify({ type: 'SavedLinks', data: [SimpleLinkObject] }),
+        target: socketInstance,
+        type: 'message'
+      });
     });
   });
 

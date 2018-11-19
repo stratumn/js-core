@@ -49,6 +49,10 @@ export class FossilizerHttpClient implements IFossilizerClient {
     eventHandler?: (e: FossilizedEvent) => void,
     logger?: ILogger
   ) {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      throw new Error('Invalid url: should start with http(s)://');
+    }
+
     if (url.endsWith('/')) {
       this.fossilizerUrl = url.substring(0, url.length - 1);
     } else {
@@ -63,8 +67,20 @@ export class FossilizerHttpClient implements IFossilizerClient {
     };
 
     if (eventHandler) {
-      this.socket = new WebSocket(this.fossilizerUrl + '/websocket');
-      this.socket.on('open', () => {
+      // For some reason ws doesn't do that conversion, we have to do it
+      // ourselves.
+      const socketBaseURL = this.fossilizerUrl.startsWith('http://')
+        ? this.fossilizerUrl.replace('http://', 'ws://')
+        : this.fossilizerUrl.replace('https://', 'wss://');
+      this.socket = new WebSocket(socketBaseURL + '/websocket');
+
+      this.socket.onerror = ({ error }) => {
+        if (this.logger) {
+          this.logger.error(error);
+        }
+      };
+
+      this.socket.onopen = () => {
         if (this.logger) {
           this.logger.info({
             component: 'fossilizerClient',
@@ -72,17 +88,17 @@ export class FossilizerHttpClient implements IFossilizerClient {
           });
         }
 
-        (this.socket as WebSocket).on('message', (jsonPayload: string) => {
+        (this.socket as WebSocket).onmessage = ({ data }) => {
           if (this.logger) {
             this.logger.info({
               component: 'fossilizerClient',
-              message: jsonPayload,
+              message: data,
               name: 'socketMessage'
             });
           }
 
           try {
-            const message = JSON.parse(jsonPayload);
+            const message = JSON.parse(data.toString());
             if (message.type === DID_FOSSILIZE_LINK_EVENT) {
               const event = new FossilizedEvent(message.data);
               eventHandler(event);
@@ -92,8 +108,17 @@ export class FossilizerHttpClient implements IFossilizerClient {
               this.logger.error(err);
             }
           }
-        });
-      });
+        };
+      };
+
+      this.socket.onclose = () => {
+        if (this.logger) {
+          this.logger.info({
+            component: 'fossilizerClient',
+            name: 'socketClose'
+          });
+        }
+      };
     }
   }
 

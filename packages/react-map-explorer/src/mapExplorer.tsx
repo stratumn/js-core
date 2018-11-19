@@ -16,8 +16,9 @@
 
 import { Segment } from '@stratumn/js-chainscript';
 import React, { Component } from 'react';
+import { hashToString } from './hash';
+import { displayMap } from './mapExplorerDisplay';
 import { IMapLoader } from './mapLoader';
-import { MapSegment } from './segment';
 
 /**
  * Props expected by the MapExplorer component.
@@ -69,23 +70,36 @@ export interface State {
  */
 export class MapExplorer extends Component<Props, State> {
   public state: State = { isLoaded: false };
+  private node?: SVGSVGElement;
 
   public async componentDidMount() {
     await this.loadMap();
+    if (this.node && this.state.segments) {
+      displayMap(this.node, this.state.segments, {
+        mapId: this.props.mapId,
+        onSegmentSelected: this.props.onSegmentSelected,
+        process: this.props.process
+      });
+    }
   }
 
   public async componentDidUpdate(prevProps: Props) {
     if (this.shouldReloadMap(prevProps)) {
       await this.loadMap();
+      if (this.node && this.state.segments) {
+        displayMap(this.node, this.state.segments, {
+          mapId: this.props.mapId,
+          onSegmentSelected: this.props.onSegmentSelected,
+          process: this.props.process
+        });
+      }
     }
   }
 
   public render() {
-    const { mapId } = this.props;
     if (!this.state.isLoaded) {
       return (
         <div>
-          <h1>{mapId}</h1>
           <p>Loading...</p>
         </div>
       );
@@ -94,31 +108,22 @@ export class MapExplorer extends Component<Props, State> {
     if (this.state.error) {
       return (
         <div>
-          <h1>{mapId}</h1>
           <p>{this.state.error.message}</p>
         </div>
       );
     }
 
-    const segments = this.state.segments as Segment[];
-    const segmentItems = segments.map((s: Segment) => (
-      <li
-        key={Buffer.from(s.linkHash()).toString('hex')}
-        onClick={() => {
-          if (this.props.onSegmentSelected) {
-            this.props.onSegmentSelected(s);
-          }
-        }}
-      >
-        <MapSegment segment={s} />
-      </li>
-    ));
-
     return (
       <div>
-        <h1>{mapId}</h1>
-        <h2>{(this.state.segments as Segment[]).length} segments found</h2>
-        <ul>{segmentItems}</ul>
+        <svg
+          ref={node => {
+            if (node) {
+              this.node = node;
+            }
+          }}
+          width='800px'
+          height='600px'
+        />
       </div>
     );
   }
@@ -143,8 +148,7 @@ export class MapExplorer extends Component<Props, State> {
 
       if (
         !this.state.segments.some(
-          (s: Segment) =>
-            Buffer.from(s.linkHash()).toString('hex') === this.props.includeHash
+          (s: Segment) => hashToString(s.linkHash()) === this.props.includeHash
         )
       ) {
         return true;

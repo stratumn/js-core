@@ -920,6 +920,16 @@
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.9.tgz#b5990152604c2ada749b7f88cab3476f21f39d7b"
   integrity sha512-q6LuBI0t5u04f0Q4/R+cGBqIbZMtJkVvCSF+nTfFBBdQqQvJR/mNHeWjRkszyLl7oyf2rDoKUYMEjTw5AV0hiw==
 
+"@types/d3-hierarchy@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@types/d3-hierarchy/-/d3-hierarchy-1.1.4.tgz#b04dfcb1f2074da789ada10fe4942d13f0bce421"
+  integrity sha512-+d2VLfLPgW66VB7k56T8tC4LobfS6Rrhm+1pmYPMmlCpO5rccJLuwux7YXl/eGVst3Bhb5PJTN5/oaJERpNw8g==
+
+"@types/d3-selection@^1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@types/d3-selection/-/d3-selection-1.3.3.tgz#9f89da68c78b6a1f940bf34b90f98b0201da908d"
+  integrity sha512-GG/wKHmbXakO/7UOmc9o/VUOEROQBcCF9X5YPbSOA31O1c0/ZdUA0tirPKAIyO48BbNgFxO9EMbxjEEbAS5unA==
+
 "@types/enzyme-adapter-react-16@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@types/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.0.3.tgz#0cf7025b036694ca8d596fe38f24162e7117acf1"
@@ -2863,6 +2873,16 @@ cyclist@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
   integrity sha1-GzN5LhHpFKL9bW7WRHRkRE5fpkA=
+
+d3-hierarchy@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/d3-hierarchy/-/d3-hierarchy-1.1.8.tgz#7a6317bd3ed24e324641b6f1e76e978836b008cc"
+  integrity sha512-L+GHMSZNwTpiq4rt9GEsNcpLa4M96lXMR8M/nMG9p5hBE0jy6C+3hWtyZMenPQdwla249iJy7Nx0uKt3n+u9+w==
+
+d3-selection@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/d3-selection/-/d3-selection-1.3.2.tgz#6e70a9df60801c8af28ac24d10072d82cbfdf652"
+  integrity sha512-OoXdv1nZ7h2aKMVg3kaUFbLLK5jXUFAMLD/Tu5JA96mjf8f2a9ZUESGY+C36t8R1WFeWk/e55hy54Ml2I62CRQ==
 
 damerau-levenshtein@^1.0.4:
   version "1.0.4"

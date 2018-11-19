@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { MapWithoutRefs, TestMapId, TestProcess } from '../test/fixtures/maps';
 import { MapExplorer } from './mapExplorer';
@@ -70,39 +70,24 @@ describe('map explorer', () => {
     );
   });
 
-  it('renders map segments count', async () => {
+  it('renders an svg for D3', async () => {
     mapLoader.load.mockResolvedValueOnce(MapWithoutRefs);
     const wrapper = shallow(<MapExplorer {...testProps} />);
 
     await new Promise(resolve => setImmediate(resolve));
     wrapper.update();
 
-    expect(
-      wrapper
-        .find('h2')
-        .first()
-        .text()
-    ).toEqual('2 segments found');
+    expect(wrapper.find('svg')).toHaveLength(1);
   });
 
-  it('renders a list of segments', async () => {
-    const segmentSelected = jest.fn();
+  it('renders svg elements for each segment', async () => {
     mapLoader.load.mockResolvedValueOnce(MapWithoutRefs);
-    const wrapper = shallow(
-      <MapExplorer {...testProps} onSegmentSelected={segmentSelected} />
-    );
+    const wrapper = mount(<MapExplorer {...testProps} />);
 
     await new Promise(resolve => setImmediate(resolve));
     wrapper.update();
 
-    expect(wrapper.find('ul').children()).toHaveLength(2);
-
-    wrapper
-      .find('li')
-      .first()
-      .simulate('click');
-    expect(segmentSelected).toHaveBeenCalled();
-    expect(segmentSelected).toHaveBeenCalledWith(MapWithoutRefs[0]);
+    expect(wrapper.html()).toMatchSnapshot('map-without-refs');
   });
 
   it('reloads when mapId changes', () => {

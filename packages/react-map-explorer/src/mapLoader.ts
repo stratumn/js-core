@@ -20,7 +20,7 @@ import {
   Pagination,
   SegmentsFilter
 } from '@stratumn/store-client';
-import { Buffer } from 'buffer';
+import { hashToString } from './hash';
 
 /**
  * Map loader loads all segments from a given map in a format suitable for
@@ -71,7 +71,7 @@ export class StoreMapLoader implements IMapLoader {
     for (const mapSegment of results) {
       for (const ref of mapSegment.link().refs()) {
         const refSegment = await this.store.getSegment(
-          Buffer.from(ref.linkHash).toString('hex')
+          hashToString(ref.linkHash)
         );
         if (refSegment) {
           refs.push(refSegment);

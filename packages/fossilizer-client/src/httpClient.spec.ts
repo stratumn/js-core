@@ -33,25 +33,18 @@ describe('fossilizer http client', () => {
     if (axiosMock) {
       axiosMock.mockRestore();
     }
+
+    mockSocket.mockReset();
   });
 
   describe('ctor', () => {
-    // Mock the WebSocket.on() method to accept an 'open' call and return a
-    // custom websocket message once.
-    const mockSocketOn = (message: string) => (
-      event: string,
-      callback: any
-    ) => {
-      if (event === 'open') {
-        callback();
-      } else if (event === 'message') {
-        callback(message);
-      }
-    };
+    it('rejects invalid url', () => {
+      expect(() => new FossilizerHttpClient('localhost:1234')).toThrowError();
+    });
 
     it('appends websocket path', () => {
       mockSocket.mockImplementationOnce((url: string) => {
-        expect(url).toBe('http://localhost:6000/websocket');
+        expect(url).toBe('ws://localhost:6000/websocket');
       });
 
       const wsClient = new FossilizerHttpClient(
@@ -66,44 +59,10 @@ describe('fossilizer http client', () => {
       expect(WebSocket).toHaveBeenCalled();
     });
 
-    it('opens a websocket with the fossilizer', done => {
-      mockSocket.mockImplementationOnce(() => {
-        return {
-          on: (event: string) => {
-            expect(event).toBe('open');
-            done();
-          }
-        };
-      });
-
-      const wsClient = new FossilizerHttpClient('http://localhost:6000', () => {
-        // This handler shouldn't be invoked in this test.
-        expect(true).toBeFalsy();
-      });
-
-      expect(wsClient).not.toBeNull();
-      expect(WebSocket).toHaveBeenCalled();
-    });
-
     it('receives fossilizer events', done => {
+      const socketInstance = new WebSocket('');
       mockSocket.mockImplementationOnce(() => {
-        return {
-          on: mockSocketOn(
-            JSON.stringify({
-              data: {
-                Data: 'YmF0bWFu',
-                Evidence: {
-                  backend: 'dummyfossilizer',
-                  proof: 'eyJ0aW1lc3RhbXAiOjE1NDAzOTM3MzV9',
-                  provider: 'dummyfossilizer',
-                  version: '1.0.0'
-                },
-                Meta: 'YmF0bWFu'
-              },
-              type: 'DidFossilizeLink'
-            })
-          )
-        };
+        return socketInstance;
       });
 
       const wsClient = new FossilizerHttpClient(
@@ -117,14 +76,32 @@ describe('fossilizer http client', () => {
       );
 
       expect(wsClient).not.toBeNull();
-      expect(WebSocket).toHaveBeenCalled();
+      expect(WebSocket).toHaveBeenCalledTimes(2);
+
+      socketInstance.onopen({ target: socketInstance });
+      socketInstance.onmessage({
+        data: JSON.stringify({
+          data: {
+            Data: 'YmF0bWFu',
+            Evidence: {
+              backend: 'dummyfossilizer',
+              proof: 'eyJ0aW1lc3RhbXAiOjE1NDAzOTM3MzV9',
+              provider: 'dummyfossilizer',
+              version: '1.0.0'
+            },
+            Meta: 'YmF0bWFu'
+          },
+          type: 'DidFossilizeLink'
+        }),
+        target: socketInstance,
+        type: 'message'
+      });
     });
 
     it('ignores unknown event type', () => {
+      const socketInstance = new WebSocket('');
       mockSocket.mockImplementationOnce(() => {
-        return {
-          on: mockSocketOn(JSON.stringify({ type: 'DidSaveLink' }))
-        };
+        return socketInstance;
       });
 
       const wsClient = new FossilizerHttpClient('http://localhost:6000', () => {
@@ -133,19 +110,20 @@ describe('fossilizer http client', () => {
       });
 
       expect(wsClient).not.toBeNull();
-      expect(WebSocket).toHaveBeenCalled();
+      expect(WebSocket).toHaveBeenCalledTimes(2);
+
+      socketInstance.onopen({ target: socketInstance });
+      socketInstance.onmessage({
+        data: `{ type: 'UNKNOWN_EVENT' }`,
+        target: socketInstance,
+        type: 'UNKNOWN_EVENT'
+      });
     });
 
     it('ignores invalid events', () => {
+      const socketInstance = new WebSocket('');
       mockSocket.mockImplementationOnce(() => {
-        return {
-          on: mockSocketOn(
-            JSON.stringify({
-              data: { Meta: 'some stuff is missing...' },
-              type: 'DidFossilizeLink'
-            })
-          )
-        };
+        return socketInstance;
       });
 
       const wsClient = new FossilizerHttpClient('http://localhost:6000', () => {
@@ -154,7 +132,14 @@ describe('fossilizer http client', () => {
       });
 
       expect(wsClient).not.toBeNull();
-      expect(WebSocket).toHaveBeenCalled();
+      expect(WebSocket).toHaveBeenCalledTimes(2);
+
+      socketInstance.onopen({ target: socketInstance });
+      socketInstance.onmessage({
+        data: `{ type: '{ this is not: { json: content}' }`,
+        target: socketInstance,
+        type: 'UNKNOWN_EVENT'
+      });
     });
   });
 

@@ -58,6 +58,10 @@ export class StoreHttpClient implements IStoreClient {
     eventHandler?: (e: StoreEvent) => void,
     logger?: ILogger
   ) {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      throw new Error('Invalid url: should start with http(s)://');
+    }
+
     if (url.endsWith('/')) {
       this.storeUrl = url.substring(0, url.length - 1);
     } else {
@@ -72,23 +76,35 @@ export class StoreHttpClient implements IStoreClient {
     };
 
     if (eventHandler) {
-      this.socket = new WebSocket(this.storeUrl + '/websocket');
-      this.socket.on('open', () => {
+      // For some reason ws doesn't do that conversion, we have to do it
+      // ourselves.
+      const socketBaseURL = this.storeUrl.startsWith('http://')
+        ? this.storeUrl.replace('http://', 'ws://')
+        : this.storeUrl.replace('https://', 'wss://');
+      this.socket = new WebSocket(socketBaseURL + '/websocket');
+
+      this.socket.onerror = ({ error }) => {
+        if (this.logger) {
+          this.logger.error(error);
+        }
+      };
+
+      this.socket.onopen = () => {
         if (this.logger) {
           this.logger.info({ component: 'storeClient', name: 'socketOpen' });
         }
 
-        (this.socket as WebSocket).on('message', (jsonPayload: string) => {
+        (this.socket as WebSocket).onmessage = ({ data }) => {
           if (this.logger) {
             this.logger.info({
               component: 'storeClient',
-              message: jsonPayload,
+              message: data,
               name: 'socketMessage'
             });
           }
 
           try {
-            const message = JSON.parse(jsonPayload);
+            const message = JSON.parse(data.toString());
             const event = new StoreEvent(message);
             eventHandler(event);
           } catch (err) {
@@ -96,8 +112,14 @@ export class StoreHttpClient implements IStoreClient {
               this.logger.error(err);
             }
           }
-        });
-      });
+        };
+      };
+
+      this.socket.onclose = () => {
+        if (this.logger) {
+          this.logger.info({ component: 'storeClient', name: 'socketClose' });
+        }
+      };
     }
   }
 

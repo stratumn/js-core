@@ -41,6 +41,12 @@ const s3 = new LinkBuilder(TestProcess, TestMapId)
   .build()
   .segmentify();
 
-const MapWithRefs = [s1, s2, s3];
+const s4 = new LinkBuilder(TestProcess, TestMapId)
+  .withParent(s2.linkHash())
+  .withRefs([new LinkReference(Ref.linkHash(), RefProcess)])
+  .build()
+  .segmentify();
+
+const MapWithRefs = [s1, s2, s3, s4];
 
 export { MapWithoutRefs, MapWithRefs, Ref, TestMapId, TestProcess };

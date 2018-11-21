@@ -70,9 +70,17 @@ export class StoreMapLoader implements IMapLoader {
     const refs: Segment[] = [];
     for (const mapSegment of results) {
       for (const ref of mapSegment.link().refs()) {
-        const refSegment = await this.store.getSegment(
-          hashToString(ref.linkHash)
-        );
+        const refHash = hashToString(ref.linkHash);
+
+        // If we already loaded that reference, continue.
+        if (
+          refs.some(r => hashToString(r.linkHash()) === refHash) ||
+          results.some(s => hashToString(s.linkHash()) === refHash)
+        ) {
+          continue;
+        }
+
+        const refSegment = await this.store.getSegment(refHash);
         if (refSegment) {
           refs.push(refSegment);
         }

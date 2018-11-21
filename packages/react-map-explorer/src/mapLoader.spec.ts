@@ -98,6 +98,8 @@ describe('store map loader', () => {
 
     expect(mock.getSegment).toHaveBeenCalled();
     expect(mock.getSegment).toHaveBeenCalledWith(hashToString(Ref.linkHash()));
+    // The reference should only appear once even though it's referenced by two
+    // distinct segments.
     expect(seg).toEqual([...MapWithRefs, Ref]);
   });
 });

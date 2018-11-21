@@ -1,6 +1,6 @@
 {
   "name": "@stratumn/react-map-explorer",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A React component to load and display Chainscript process maps.",
   "keywords": [
     "stratumn",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@stratumn/js-chainscript": "^1.0.3",
-    "@stratumn/store-client": "^0.1.2",
+    "@stratumn/store-client": "^0.1.3",
     "buffer": "^5.2.1",
     "d3-hierarchy": "^1.1.8",
     "d3-selection": "^1.3.2",

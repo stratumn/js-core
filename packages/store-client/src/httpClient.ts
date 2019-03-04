@@ -154,6 +154,26 @@ export class StoreHttpClient implements IStoreClient {
     return segment;
   }
 
+  public async createLinkBatch(links: Link[]): Promise<Segment[]> {
+    const response = await axios.post(
+      this.storeUrl + '/batch/links',
+      links.map(link => link.toObject({ bytes: String })),
+      this.reqConfig
+    );
+    this.handleHttpErr(response);
+
+    try {
+      const segments = response.data.map((segment: any) =>
+        fromSegmentObject(segment)
+      );
+      return segments;
+    } catch (err) {
+      throw new Error(
+        `expected a segments list, received: ${JSON.stringify(response.data)}`
+      );
+    }
+  }
+
   public async getSegment(linkHash: string): Promise<Segment | null> {
     const response = await axios.get(
       this.storeUrl + '/segments/' + linkHash,

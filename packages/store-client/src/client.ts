@@ -38,6 +38,14 @@ export interface IStoreClient {
   createLink(link: Link): Promise<Segment>;
 
   /**
+   * Create a collection of links atomically in the Chainscript store.
+   * Will throw an error if any of the links could not be created.
+   * @param links links that should be stored.
+   * @returns the segments encapsulating the input links.
+   */
+  createLinkBatch(links: Link[]): Promise<Segment[]>;
+
+  /**
    * Get a segment from its link hash.
    * @param linkHash hex-encoded link hash.
    * @returns the segment with its evidences (if any).

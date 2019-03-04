@@ -163,9 +163,7 @@ export class StoreHttpClient implements IStoreClient {
     this.handleHttpErr(response);
 
     try {
-      const segments = response.data.map((segment: any) =>
-        fromSegmentObject(segment)
-      );
+      const segments = response.data.map(fromSegmentObject);
       return segments;
     } catch (err) {
       throw new Error(

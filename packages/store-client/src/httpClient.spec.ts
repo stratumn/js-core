@@ -235,6 +235,53 @@ describe('store http client', () => {
     });
   });
 
+  describe('create link batch', () => {
+    it('throws if status code is not ok', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        status: 500,
+        statusText: 'Unknown Transaction Error'
+      });
+
+      const [err] = await to(client.createLinkBatch([SimpleLink]));
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toEqual(new Error('HTTP 500: Unknown Transaction Error'));
+    });
+
+    it('throws if response is not a segment array', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        data: SimpleSegmentObject,
+        status: 200
+      });
+
+      const [err] = await to(client.createLinkBatch([SimpleLink]));
+      expect(axiosMock).toHaveBeenCalled();
+      expect(err).toBeDefined();
+      expect(err.message.substring(0, 24)).toEqual('expected a segments list');
+    });
+
+    it('serializes the links', async () => {
+      axiosMock = jest.spyOn(axios, 'post');
+      axiosMock.mockResolvedValue({
+        data: [SimpleSegmentObject],
+        status: 200
+      });
+
+      const segments = await client.createLinkBatch([SimpleLink]);
+
+      expect(axiosMock).toHaveBeenCalled();
+      expect(axiosMock).toHaveBeenCalledWith(
+        'https://store.stratumn.com/batch/links',
+        [SimpleLinkObject],
+        { timeout: 10000, validateStatus: undefined }
+      );
+
+      expect(segments).toHaveLength(1);
+      expect(segments[0].linkHash()).toEqual(SimpleLink.hash());
+    });
+  });
+
   describe('get segment', () => {
     it('throws in case of error', async () => {
       axiosMock = jest.spyOn(axios, 'get');

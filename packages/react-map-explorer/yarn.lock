@@ -751,12 +751,12 @@
   dependencies:
     bignumber.js "^4.1.0"
 
-"@stratumn/js-chainscript@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.3.tgz#74bbee2fd6b3bda68ea2a02afd4cba5036097b85"
+"@stratumn/js-chainscript@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.8.tgz#a8911d03910aaf53f7172de2a1d45d06fe9cf1f7"
   dependencies:
     "@stratumn/canonicaljson" "^1.0.2"
-    "@stratumn/js-crypto" "0.1.0"
+    "@stratumn/js-crypto" "1.3.0"
     "@types/base64-js" "^1.2.5"
     "@types/jmespath" "^0.15.0"
     "@types/js-base64" "^2.3.1"
@@ -767,39 +767,17 @@
     js-base64 "^2.4.9"
     protobufjs "^6.8.8"
 
-"@stratumn/js-chainscript@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.5.tgz#1cc145f8ea5e8fa35b4e01868430f7812d5a1816"
-  dependencies:
-    "@stratumn/canonicaljson" "^1.0.2"
-    "@stratumn/js-crypto" "1.2.0"
-    "@types/base64-js" "^1.2.5"
-    "@types/jmespath" "^0.15.0"
-    "@types/js-base64" "^2.3.1"
-    base64-js "^1.3.0"
-    buffer "^5.2.1"
-    fast-sha256 "^1.1.0"
-    jmespath "^0.15.0"
-    js-base64 "^2.4.9"
-    protobufjs "^6.8.8"
-
-"@stratumn/js-crypto@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-crypto/-/js-crypto-0.1.0.tgz#6e6e7188893728f408cf9bb43519831e7fa5aef8"
+"@stratumn/js-crypto@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@stratumn/js-crypto/-/js-crypto-1.3.0.tgz#99cc67cd702a2681e24f8fce62e16bc12fda14af"
   dependencies:
     node-forge "^0.7.5"
 
-"@stratumn/js-crypto@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-crypto/-/js-crypto-1.2.0.tgz#982502c0b7470447346942008d03035517f6f24d"
+"@stratumn/store-client@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@stratumn/store-client/-/store-client-0.1.6.tgz#3f8d26c20ecd250e90920bbf9746119ab9068db1"
   dependencies:
-    node-forge "^0.7.5"
-
-"@stratumn/store-client@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@stratumn/store-client/-/store-client-0.1.3.tgz#021fe01b92147d72b72fc710e0a685219175c62a"
-  dependencies:
-    "@stratumn/js-chainscript" "^1.0.3"
+    "@stratumn/js-chainscript" "^1.0.8"
     axios "^0.18.0"
     isomorphic-ws "^4.0.1"
     ws "^6.1.2"

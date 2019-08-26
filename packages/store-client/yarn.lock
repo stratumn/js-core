@@ -65,12 +65,12 @@
   dependencies:
     bignumber.js "^4.1.0"
 
-"@stratumn/js-chainscript@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.5.tgz#1cc145f8ea5e8fa35b4e01868430f7812d5a1816"
+"@stratumn/js-chainscript@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@stratumn/js-chainscript/-/js-chainscript-1.0.8.tgz#a8911d03910aaf53f7172de2a1d45d06fe9cf1f7"
   dependencies:
     "@stratumn/canonicaljson" "^1.0.2"
-    "@stratumn/js-crypto" "1.2.0"
+    "@stratumn/js-crypto" "1.3.0"
     "@types/base64-js" "^1.2.5"
     "@types/jmespath" "^0.15.0"
     "@types/js-base64" "^2.3.1"
@@ -81,9 +81,9 @@
     js-base64 "^2.4.9"
     protobufjs "^6.8.8"
 
-"@stratumn/js-crypto@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@stratumn/js-crypto/-/js-crypto-1.2.0.tgz#982502c0b7470447346942008d03035517f6f24d"
+"@stratumn/js-crypto@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@stratumn/js-crypto/-/js-crypto-1.3.0.tgz#99cc67cd702a2681e24f8fce62e16bc12fda14af"
   dependencies:
     node-forge "^0.7.5"
 
